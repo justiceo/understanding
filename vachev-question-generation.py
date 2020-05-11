@@ -16,6 +16,7 @@ from gensim.models import KeyedVectors
 from gensim.test.utils import datapath, get_tmpfile
 from pathlib import Path
 
+# TODO: Add benepar for constituency parsing.
 print("loading spacy model...")
 nlp = spacy.load('en_core_web_sm')
 
@@ -27,7 +28,7 @@ print("loading glove word2vec...")
 glove2word2vec(glove_file, tmp_file)
 print("creating model from word2vec...")
 model = KeyedVectors.load_word2vec_format(tmp_file)
-
+print("loaded all necessary files...")
 
 def dumpPickle(fileName, content):
     pickleFile = open(fileName, 'wb')
@@ -44,12 +45,7 @@ def loadPickle(fileName):
 
 
 def pickleExists(fileName):
-    file = Path(fileName)
-
-    if file.is_file():
-        return True
-
-    return False
+    return Path(fileName).is_file()
 
 
 # Extract answers and the sentence they are in
@@ -87,7 +83,7 @@ def tokenIsAnswer(token, sentenceId, answers):
 # Save named entities start points
 
 
-def getNEStartIndexs(doc):
+def getNameEntityStartIndices(doc):
     neStarts = {}
     for ne in doc.ents:
         neStarts[ne.start] = ne
@@ -95,7 +91,7 @@ def getNEStartIndexs(doc):
     return neStarts
 
 
-def getSentenceStartIndexes(doc):
+def getSentenceStartIndices(doc):
     senStarts = []
 
     for sentence in doc.sents:
@@ -113,8 +109,8 @@ def getSentenceForWordPosition(wordPos, senStarts):
 def addWordsForParagrapgh(newWords, text):
     doc = nlp(text)
 
-    neStarts = getNEStartIndexs(doc)
-    senStarts = getSentenceStartIndexes(doc)
+    neStarts = getNameEntityStartIndices(doc)
+    senStarts = getSentenceStartIndices(doc)
 
     # index of word in spacy doc text
     i = 0
