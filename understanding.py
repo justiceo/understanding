@@ -108,6 +108,7 @@ def is_direct_question(query):
 def traverse(t):
     try:
         t.label()
+        print(" ".join(t.leaves()))
     except AttributeError:
         return
     print(t)
@@ -117,5 +118,6 @@ parser = benepar.Parser("benepar_en2")
 tree = parser.parse("in what way")
 print(tree)
 print("is direct question", is_direct_question(tree))
+print(traverse(tree))
 
 # failing cases: "Would you be there", "Do you know him", "Can you find the rope"
