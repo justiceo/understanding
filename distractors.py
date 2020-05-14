@@ -4,6 +4,7 @@ import flair.datasets
 from flair.data import MultiCorpus
 from nltk.tag import StanfordNERTagger
 from nltk.tokenize import word_tokenize
+from nltk.parse import CoreNLPParser
 import scispacy
 import spacy
 import time
@@ -71,6 +72,11 @@ def get_stanford_ner7(text):
     st7_classified = st7.tag(tokenized_text)
     return [t for t in group_tags(st7_classified) if t[1] != 'O']
 
+def get_stanford_ner(text):
+    # Don't forget to start server in ~/code/stanford-nlp/ by running
+    # java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000
+    ner_tagger = CoreNLPParser(url='http://localhost:9000', tagtype='ner')
+    return [t for t in list(group_tags(ner_tagger.tag((text)))) if t[1] != 'O']
 
 def get_flair_ner(text):
     # wnut_17 = flair.datasets.WNUT_17()
@@ -123,6 +129,10 @@ def eval(text):
     start = time.time()
 
     print("\nStanford NER7: ", get_stanford_ner7(text))
+    print("Time taken: ", time.time() - start)
+    start = time.time()
+
+    print("\nStanford NER: ", get_stanford_ner(text))
     print("Time taken: ", time.time() - start)
     start = time.time()
 
