@@ -7,12 +7,31 @@ from nltk.tokenize import word_tokenize
 import scispacy
 import spacy
 import time
+from chemdataextractor import Document
 
 
 # TODO
 # Train a chemistry/science NER since NER can be used for both answer generation and distractor generation.
 # Input to this script should be a context string and output should be all the NEs.
 # spacy has an optimal module for generating sentences from long texts. https://spacy.io/api/sentencizer
+# get wikidata using https://github.com/attardi/wikiextractor
+# perform co-reference resolution on the text first using - https://github.com/facebookresearch/SpanBERT
+# Wikipedia data dump download url - https://github.com/trycycle/wikipedia-downloader
+# https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
+
+def group_tags(tags):
+    out = []
+    for tag in tags:
+        if len(out) == 0:
+            out.append(tag)
+            continue
+
+        last = out.pop()        
+        if tag[1] == last[1]:
+            out.append((' '.join([last[0], tag[0]]), tag[1]))
+        else:
+            out.extend([last, tag])
+    return out
 
 def get_spacy_ner(text):
     nlp = spacy.load("en_core_web_sm")
@@ -42,7 +61,7 @@ def get_stanford_ner3(text):
                             './stanford-ner/stanford-ner-3.9.2.jar', 'utf-8')
     tokenized_text = word_tokenize(text)
     classified = st3.tag(tokenized_text)
-    return [t for t in classified if t[1] != 'O']
+    return [t for t in group_tags(classified) if t[1] != 'O']
 
 
 def get_stanford_ner7(text):
@@ -50,7 +69,7 @@ def get_stanford_ner7(text):
                             './stanford-ner/stanford-ner-3.9.2.jar', 'utf-8')
     tokenized_text = word_tokenize(text)
     st7_classified = st7.tag(tokenized_text)
-    return [t for t in st7_classified if t[1] != 'O']
+    return [t for t in group_tags(st7_classified) if t[1] != 'O']
 
 
 def get_flair_ner(text):
@@ -70,6 +89,10 @@ def get_flair_ner(text):
     # iterate over entities and print
     return sentence.get_spans('ner')
 
+
+def get_chem_data_extractor_ner(text):
+    doc = Document(text)
+    return doc.cems
 
 def eval(text):
     print("\nSentence: ", text)
@@ -100,6 +123,10 @@ def eval(text):
     start = time.time()
 
     print("\nStanford NER7: ", get_stanford_ner7(text))
+    print("Time taken: ", time.time() - start)
+    start = time.time()
+
+    print("\nChemDataExtractor: ", get_chem_data_extractor_ner(text))
     print("Time taken: ", time.time() - start)
     start = time.time()
 
