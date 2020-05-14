@@ -4,7 +4,7 @@ import flair.datasets
 from flair.data import MultiCorpus
 from nltk.tag import StanfordNERTagger
 from nltk.tokenize import word_tokenize
-from nltk.parse import CoreNLPParser
+from corenlp_parser import CoreNLPParser
 import scispacy
 import spacy
 import time
@@ -27,12 +27,13 @@ def group_tags(tags):
             out.append(tag)
             continue
 
-        last = out.pop()        
+        last = out.pop()
         if tag[1] == last[1]:
             out.append((' '.join([last[0], tag[0]]), tag[1]))
         else:
             out.extend([last, tag])
     return out
+
 
 def get_spacy_ner(text):
     nlp = spacy.load("en_core_web_sm")
@@ -50,6 +51,7 @@ def get_scispacy_ner(text):
     nlp = spacy.load("en_core_sci_sm")
     doc = nlp(text)
     return [(ent.text, ent.label_) for ent in doc.ents]
+
 
 def get_scispacy_bc5_ner(text):
     nlp = spacy.load('en_ner_bc5cdr_md')
@@ -72,11 +74,15 @@ def get_stanford_ner7(text):
     st7_classified = st7.tag(tokenized_text)
     return [t for t in group_tags(st7_classified) if t[1] != 'O']
 
+
 def get_stanford_ner(text):
     # Don't forget to start server in ~/code/stanford-nlp/ by running
     # java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000
-    ner_tagger = CoreNLPParser(url='http://localhost:9000', tagtype='ner')
-    return [t for t in list(group_tags(ner_tagger.tag((text)))) if t[1] != 'O']
+    # test with:
+    # wget --post-data 'John Doe lives in America, he lives on the 3rd floor.' 'localhost:9000/?properties={"annotators": "tokenize,ssplit,ner,parse,dcoref", "outputFormat": "json"}' -O - > data/sample_out.json
+    ner_tagger = CoreNLPParser(sentences=text)
+    return ner_tagger.ents()
+
 
 def get_flair_ner(text):
     # wnut_17 = flair.datasets.WNUT_17()
@@ -99,6 +105,7 @@ def get_flair_ner(text):
 def get_chem_data_extractor_ner(text):
     doc = Document(text)
     return doc.cems
+
 
 def eval(text):
     print("\nSentence: ", text)
@@ -174,7 +181,7 @@ solvent was).
 """
 
 text5 = """
-"A self-described \"modern-day feminist\", Beyonc\u00e9 creates songs that are often
+A self-described \"modern-day feminist\", Beyonc\u00e9 creates songs that are often 
 characterized by themes of love, relationships, and monogamy, as well as female sexuality and empowerment. 
 On stage, her dynamic, highly choreographed performances have led to critics hailing 
 her as one of the best entertainers in contemporary popular music. 

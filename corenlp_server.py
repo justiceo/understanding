@@ -245,7 +245,6 @@ class GenericCoreNLPParser(ParserI, TokenizerI, TaggerI):
 
         default_properties.update(properties or {})
 
-        print("\n\nurl, properties", self.url, default_properties)
         response = self.session.post(
             self.url,
             params={"properties": json.dumps(default_properties)},
@@ -254,7 +253,6 @@ class GenericCoreNLPParser(ParserI, TokenizerI, TaggerI):
         )
 
         response.raise_for_status()
-        print("\n\nResponse json %s\n\n", response.json())
         return response.json()
 
     def raw_parse_sents(
@@ -355,6 +353,7 @@ class GenericCoreNLPParser(ParserI, TokenizerI, TaggerI):
         ('airspeed', 'NN'), ('of', 'IN'), ('an', 'DT'),
         ('unladen', 'JJ'), ('swallow', 'VB'), ('?', '.')]
         """
+
         return self.tag_sents([sentence])[0]
 
     def tag_sents(self, sentences):
@@ -391,16 +390,28 @@ class GenericCoreNLPParser(ParserI, TokenizerI, TaggerI):
         assert self.tagtype in ["pos", "ner"]
         default_properties["annotators"] += self.tagtype
         for sentence in sentences:
-            print("calling api for sent: ", sentence)
             tagged_data = self.api_call(
                 sentence, properties=default_properties)
-            yield [
-                [
-                    (token["word"], token[self.tagtype])
-                    for token in tagged_sentence["tokens"]
+            if self.tagtype == 'ner':
+                yield [
+                    [
+                        (token["text"], token["ner"], token["characterOffsetBegin"],
+                         token["characterOffsetEnd"], token["nerConfidences"])
+                        if "nerConfidences" in token else
+                        (token["text"], token["ner"], token["characterOffsetBegin"],
+                         token["characterOffsetEnd"], None)
+                        for token in tagged_sentence["entitymentions"]
+                    ]
+                    for tagged_sentence in tagged_data["sentences"]
                 ]
-                for tagged_sentence in tagged_data["sentences"]
-            ]
+            else:
+                yield [
+                    [
+                        (token["word"], token[self.tagtype])
+                        for token in tagged_sentence["tokens"]
+                    ]
+                    for tagged_sentence in tagged_data["sentences"]
+                ]
 
 
 class CoreNLPParser(GenericCoreNLPParser):
