@@ -38,3 +38,6 @@ class CoreNLPParser():
             [t for t in tagged_sentence["entitymentions"]]
             for tagged_sentence in self.tagged_data["sentences"]
         ]
+
+    def sents(self):
+        return self.tagged_data["sentences"]
