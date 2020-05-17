@@ -81,7 +81,7 @@ def get_stanford_ner(text):
     # test with:
     # wget --post-data 'John Doe lives in America, he lives on the 3rd floor.' 'localhost:9000/?properties={"annotators": "tokenize,ssplit,ner,parse,dcoref", "outputFormat": "json"}' -O - > data/sample_out.json
     ner_tagger = CoreNLPParser(sentences=text)
-    return ner_tagger.ents()
+    return ner_tagger.ent_tags()
 
 
 def get_flair_ner(text):
@@ -204,8 +204,30 @@ The distinct cultural and ethnic identity of the Normans emerged initially in th
 and it continued to evolve over the succeeding centuries.
 """
 
+text7 = """
+The modern human experience places a large emphasis upon the material world. From the
+day of our birth to the day we die, we are frequently preoccupied with the world around
+us. Whether struggling to feed ourselves, occupying ourselves with modern inventions,
+interacting with other people or animals, or simply meditating on the air we breathe, our
+attention is focused on different aspects of the material world. In fact only a handful of
+disciplines—certain subsets of religion, philosophy, and abstract math—can be considered
+completely unrelated to the material world. Everything else is somehow related to chemistry,
+the scientific discipline which studies the properties, composition, and transformation of
+matter.
+Chemistry itself has a number of branches:
+• Analytical chemistry seeks to determine the composition of substances.
+• Biochemistry is the study of chemicals found in living things (such as DNA and proteins).
+• Inorganic Chemistry studies substances that do not contain carbon.
+• Organic chemistry studies carbon-based substances. Carbon, as described in more detail
+in this book, has unique properties that allow it to make complex chemicals, including
+those of living organisms. An entire field of chemistry is devoted to substances with this
+element.
+• Physical chemistry is the study of the physical properties of chemicals, 
+which are characteristics that can be measured without changing the composition of the substance.
+"""
+
 # Stanford NER3 => Very precise
 # Spacy SM => Very fast
 # (Spacy SM intersected with Spacy LG) => Precise, rich and slow.
 
-eval(text6)
+eval(text7)

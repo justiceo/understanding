@@ -9,7 +9,7 @@ import re
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", required=False,
-                    default='data/sample_input.txt',
+                    default='data/sample_input2.txt',
                     help="Plain text file with text for generating questions.")
 parser.add_argument("--output", required=False,
                     default='data/sample_out.text',
@@ -84,15 +84,14 @@ def run():
 
     # flatten the list and remove Os for easy search
     entities = [ent for ent_group in parser.ents() for ent in ent_group if ent["ner"] != "O"]
-    # print("entities: ", [(e["text"], e["ner"]) for e in entities])
+    print("entities: ", [(e["text"], e["ner"]) for e in entities])
 
     # generate questions by replacing entities in sentences.
     questions = []
     for sent in parser.sents():
-        sentence = sentence_str(sent)
         for entity in sent["entitymentions"]:
             question = {}
-            question["prompt"] = sentence.replace(entity["text"], "_____")
+            question["prompt"] = sentence_str(sent).replace(entity["text"], "_____")
             question["answer"] = entity["text"].title()
             question["options"] = get_similar_entities(entity, entities)
             questions.append(question)

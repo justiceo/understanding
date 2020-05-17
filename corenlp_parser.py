@@ -33,6 +33,11 @@ class CoreNLPParser():
         response.raise_for_status()
         return response.json()
 
+    def ent_tags(self):
+        entities = [ent for ent_group in self.ents()
+                    for ent in ent_group if ent["ner"] != "O"]
+        return [(e["text"], e["ner"]) for e in entities]
+
     def ents(self):
         return [
             [t for t in tagged_sentence["entitymentions"]]
