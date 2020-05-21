@@ -34,7 +34,7 @@ class CoreNLPParser():
         return response.json()
 
     def ent_tags(self):
-        return [(e["text"], e["ner"]) for e in ent_flat()]
+        return [(e["text"], e["ner"]) for e in self.ent_flat()]
 
     def ent_flat(self):
         return [ent for ent_group in self.ents()

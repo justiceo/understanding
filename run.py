@@ -9,7 +9,7 @@ import gensim.downloader as api
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", required=False,
-                    default='data/sample_input2.txt',
+                    default='data/sample_input.txt',
                     help="Plain text file with text for generating questions.")
 parser.add_argument("--output", required=False,
                     default='data/sample_out.text',
@@ -71,6 +71,10 @@ def get_similar_entities_cosine(target, count=5):
 
     odd_one = model.doesnt_match(topN)
     print("\nodd one: ", odd_one)
+    all = topN + [target["text"]]
+    for item in all:
+        excluded =  all.remove(item)
+        
 
     return topN
 
