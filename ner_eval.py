@@ -46,6 +46,10 @@ def get_spacy_ner_lg(text):
     doc = nlp(text)
     return [(ent.text, ent.label_) for ent in doc.ents]
 
+def get_spacy_el(text):
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp(text)
+    return [(ent.text, ent.label_, ent.kb_id_) for ent in doc.ents]
 
 def get_scispacy_ner(text):
     nlp = spacy.load("en_core_sci_sm")
@@ -230,4 +234,4 @@ which are characteristics that can be measured without changing the composition 
 # Spacy SM => Very fast
 # (Spacy SM intersected with Spacy LG) => Precise, rich and slow.
 
-eval(text7)
+# eval(text7)
