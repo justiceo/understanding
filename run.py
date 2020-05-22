@@ -6,6 +6,7 @@ from nltk.tree import Tree
 from corenlp_parser import CoreNLPParser
 import re
 import gensim.downloader as api
+from difflib import SequenceMatcher
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", required=False,
@@ -46,37 +47,74 @@ def get_similar_entities(target, entities):
     options = []
 
     if target["ner"] in ["DATE", "ORDINAL", "CARDINAL", "NUMBER"]:
-        return get_similar_entities_cosine(target)
+        return get_similar_numeric(target)
 
-    for ent in entities:
-        if len(options) >= 4:
-            return options
-
-        et = ent["text"].title()
-        tt = target["text"].title()
-        en = ent["ner"]
-        tn = target["ner"]
-        if en == tn and et not in tt and tt not in et and et not in options:
-            options.append(et)
-    return options
+    return get_similar_other(target)
 
 
-def get_similar_entities_cosine(target, count=5):
+def get_similar_numeric(target, count=5):
     try:
         closestWords = model.similar_by_word(word=target["text"], topn=count)
     except:
         return []
 
-    topN = list(map(lambda x: x[0], closestWords))[0:count]
+    topN = list(map(lambda x: x[0], closestWords))
 
+    # Make the odd item the last item.
     odd_one = model.doesnt_match(topN)
-    print("\nodd one: ", odd_one)
-    all = topN + [target["text"]]
-    for item in all:
-        excluded =  all.remove(item)
-        
+    topN.remove(odd_one)
+    topN.append(odd_one)
 
     return topN
+
+
+def get_similar_other(target, count=5, debug=False):
+    terms = target["text"].split()
+    if debug:
+        print("terms: ", terms)
+    try:
+        closestWords = model.most_similar(positive=terms, topn=count*10)
+    except:
+        if debug:
+            print("error getting most_similar")
+        return []
+
+    closestWords = list(map(lambda x: x[0], closestWords))
+    if debug:
+        print("closestWords: ", closestWords, " terms: ", terms)
+
+    # Returns true if Longest Common Substring between x, y is longer than half the length of either.
+    # TODO: Update to use a fuzzymatcher - https://pypi.org/project/fuzzywuzzy/
+    # (Beyonce, BeyBey) => true
+    # (Beyonce, yonce) => true
+    # (Beyonce, Jay-Z) => false
+    def is_reasonable_lcs(x, y): return SequenceMatcher(
+        None, x, y).find_longest_match(0, len(x), 0, len(y))[2] <= min(len(x), len(y))/2
+
+    def is_unique(arr, e):
+        e_lower = e.lower()
+        for x in arr:
+            if not is_reasonable_lcs(x.lower(), e_lower):
+                return False
+        return True
+    # equivalent_lambda = lambda arr, e: len([x for x in arr if not is_reasonable_lcs(x.lower(),e.lower())]) > 0
+
+    # Perform Longest Common Substring search over options with limit.
+    unique_options = terms.copy()
+    for x in closestWords:
+        if len(unique_options) >= count + len(terms):
+            break
+        if is_unique(unique_options, x):
+            unique_options.append(x)
+
+    if debug:
+        print("unique after LSC: ", unique_options, " terms: ", terms)
+
+    # Remove terms from options
+    for t in terms:
+        unique_options.remove(t)
+
+    return unique_options
 
 
 def run():
@@ -104,13 +142,21 @@ def run():
             question["answer"] = entity["text"]
             question["options"] = get_similar_entities(entity, entities)
             questions.append(question)
+            if len(question["options"]) >= 4:
+                continue
             print(question["prompt"])
             print(question["answer"])
             print(question["options"])
+    
+    print("\n\n\n\nMore than 4 options:\n")
+    for q in [q for q in questions if len(q["options"]) >= 4]:
+        print(q["prompt"])
+        print(q["answer"])
+        print(q["options"])
 
     # TODO: score the prompt, answer and options.
 
     print("Done...", time.time() - start)
 
 
-run()
+# run()
