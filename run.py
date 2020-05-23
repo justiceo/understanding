@@ -7,6 +7,7 @@ from corenlp_parser import CoreNLPParser
 import re
 import gensim.downloader as api
 from difflib import SequenceMatcher
+from fuzzywuzzy import fuzz
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", required=False,
@@ -89,7 +90,7 @@ def get_similar_other(target, count=5, debug=False):
     # (Beyonce, yonce) => true
     # (Beyonce, Jay-Z) => false
     def is_reasonable_lcs(x, y): return SequenceMatcher(
-        None, x, y).find_longest_match(0, len(x), 0, len(y))[2] <= min(len(x), len(y))/2
+        None, x, y).find_longest_match(0, len(x), 0, len(y))[2] <= min(len(x), len(y))/2 and fuzz.ratio(x, y) < 80
 
     def is_unique(arr, e):
         e_lower = e.lower()
@@ -147,7 +148,7 @@ def run():
             print(question["prompt"])
             print(question["answer"])
             print(question["options"])
-    
+
     print("\n\n\n\nMore than 4 options:\n")
     for q in [q for q in questions if len(q["options"]) >= 4]:
         print(q["prompt"])
