@@ -83,7 +83,7 @@ def get_stanford_ner(text):
     # Don't forget to start server in ~/code/stanford-nlp/ by running
     # java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000
     # test with:
-    # wget --post-data 'John Doe lives in America. The Earth's crust is red.' 'localhost:9000/?properties={"annotators": "tokenize,ssplit,ner,parse,dcoref", "outputFormat": "json"}' -O - > data/sample_out.json
+    # wget --post-data 'John Doe lives in America. The Earth"s crust is red.' 'localhost:9000/?properties={"annotators": "tokenize,ssplit,ner,parse,dcoref", "outputFormat": "json"}' -O - > data/sample_out.json
     ner_tagger = CoreNLPParser(sentences=text)
     return ner_tagger.ent_tags()
 
