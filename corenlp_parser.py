@@ -8,18 +8,18 @@ import json
 class CoreNLPParser():
     """Interface to the CoreNLP Parser."""
 
-    def __init__(self, sentences=None, url="http://localhost:9000", encoding="utf8"):
+    def __init__(self, sentences=None, url="http://localhost:9000", encoding="utf8", annotators="ner"):
         import requests
 
         self.url = url
         self.encoding = encoding
         self.session = requests.Session()
-        self.tagged_data = self.api_call(sentences)
+        self.tagged_data = self.api_call(sentences, annotators)
 
-    def api_call(self, data, timeout=60):
+    def api_call(self, data, annotators, timeout=60):
         default_properties = {
             "outputFormat": "json",
-            "annotators": "tokenize,ssplit,ner",
+            "annotators": annotators,
             # "annotators": "tokenize,pos,lemma,ssplit,parse,pos,ner,dcoref",
         }
 
@@ -32,6 +32,9 @@ class CoreNLPParser():
 
         response.raise_for_status()
         return response.json()
+
+    def coref(self):
+        return self.tagged_data["corefs"]
 
     def ent_tags(self):
         return [(e["text"], e["ner"]) for e in self.ent_flat()]

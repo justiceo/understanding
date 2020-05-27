@@ -50,6 +50,7 @@ def get_similar_entities(target, entities):
     if target["ner"] in ["DATE", "ORDINAL", "CARDINAL", "NUMBER"]:
         return get_similar_numeric(target)
 
+    # TODO: If ner is person and has two words, double options and join.
     return get_similar_other(target)
 
 
@@ -117,13 +118,25 @@ def get_similar_other(target, count=5, debug=False):
 
     return unique_options
 
+def resolve_corefs(text):
+    start = time.time()
+    
+    # resolve co-references (the time grows at least exponentially with text length)
+    corefParser = CoreNLPParser(sentences=text, annotators="dcoref")
+    print(corefParser.coref())
+    print("resolved co-refs: ", time.time() -start)
+
+    # TODO: Update text.
+    return text
 
 def run():
     start = time.time()
 
     # get input text.
     text = get_input()
-    # text = "John lived in America. He is married."
+    
+    # resolve co-refs: she -> Beyonce
+    text = resolve_corefs(text)
 
     # parse text using CoreNLP Server.
     parser = CoreNLPParser(sentences=text)
