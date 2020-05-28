@@ -6,12 +6,13 @@ from nltk.tree import Tree
 from corenlp_parser import CoreNLPParser
 import re
 import gensim.downloader as api
+from gensim.summarization.summarizer import summarize
 from difflib import SequenceMatcher
 from fuzzywuzzy import fuzz
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", required=False,
-                    default='data/sample_input.txt',
+                    default='data/beyonce.txt',
                     help="Plain text file with text for generating questions.")
 parser.add_argument("--output", required=False,
                     default='data/sample_out.text',
@@ -129,6 +130,10 @@ def resolve_corefs(text):
     # TODO: Update text.
     return text
 
+def trim_text(text):
+    # remove text that doesn't add much to essence, in this case 10% of input text.
+    return summarize(text, ratio=0.9)
+
 def run():
     start = time.time()
 
@@ -137,10 +142,17 @@ def run():
     
     # resolve co-refs: she -> Beyonce
     text = resolve_corefs(text)
+    print("resolved co-refs...", time.time() - start)
+    start = time.time()
+    
+    text = trim_text(text)
+    print("trimmed text...", time.time() - start)
+    start = time.time()
 
     # parse text using CoreNLP Server.
     parser = CoreNLPParser(sentences=text)
     print("parsed text...", time.time() - start)
+    start = time.time()
 
     # get flat list of entities without Os.
     entities = parser.ent_flat()
