@@ -3,29 +3,7 @@ import queue
 import gensim.downloader as api
 from difflib import SequenceMatcher
 from fuzzywuzzy import fuzz
-import logging
-
-
-def get_logger():
-    # create logger
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-
-    # create console handler and set level to debug
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-
-    # create formatter
-    formatter = logging.Formatter(
-        '%(asctime)s:%(name)s:%(levelname)s: %(message)s', "%Y-%m-%d %H:%M:%S")
-
-    # add formatter to ch
-    ch.setFormatter(formatter)
-
-    # add ch to logger
-    logger.addHandler(ch)
-
-    return logger
+from utils import *
 
 
 def most_similar(count=10, model_name="glove-wiki-gigaword-50", port=9100):
