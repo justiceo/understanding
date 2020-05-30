@@ -12,11 +12,11 @@ def get_queues():
     return (shared_terms_queue, shared_similarities_queue)
 
 
-def resolve(terms):
+def most_similar(terms):
     (shared_terms_queue, shared_similarities_queue) = get_queues()
     shared_terms_queue.put(terms)
     return shared_similarities_queue.get()
 
 
 if __name__ == "__main__":
-    print(resolve(["barack", "obama"]))
+    print(most_similar(["barack", "obama"]))

@@ -2,9 +2,9 @@
 import logging
 
 
-def get_logger():
+def get_logger(name=__name__):
     # create logger
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
 
     # create console handler and set level to debug

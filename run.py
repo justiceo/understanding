@@ -10,6 +10,8 @@ from gensim.summarization.summarizer import summarize
 from difflib import SequenceMatcher
 from fuzzywuzzy import fuzz
 from wiki_paragraphs import paragraphs_local
+from utils import *
+from gensim_client import most_similar
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", required=False,
@@ -18,16 +20,8 @@ parser.add_argument("--input", required=False,
 parser.add_argument("--output", required=False,
                     default='data/sample_out.text',
                     help="File to write JSON list of questions")
-
 args = parser.parse_args()
-# For more on gensim models see https://github.com/RaRe-Technologies/gensim-data
-print("loading model...")
-start = time.time()
-model = api.load("fasttext-wiki-news-subwords-300")
-print("loaded model...", time.time() - start)
-start = time.time()
-space_regex = re.compile(r"\( ", re.IGNORECASE)
-
+logger = get_logger(__name__)
 
 def sentence_str(sentence):
     if "parse" in sentence:
@@ -36,123 +30,52 @@ def sentence_str(sentence):
     else:
         combined = " ".join([t["word"] for t in sentence["tokens"]])
         # TODO: fix unnecessary spaces with regex replace.
+        # space_regex = re.compile(r"\( ", re.IGNORECASE)
         # combined = space_regex.sub("\(", combined)
         return combined
 
 
-def get_similar_entities(target, entities):
-    options = []
+def get_similar_entities(target):
+    # TODO: Update to differentiate numericals.
+    return most_similar(target["text"].split())
 
-    if target["ner"] in ["DATE", "ORDINAL", "CARDINAL", "NUMBER"]:
-        return get_similar_numeric(target)
-
-    # TODO: If ner is person and has two words, double options and join.
-    return get_similar_other(target)
-
-
-def get_similar_numeric(target, count=5):
-    try:
-        closestWords = model.similar_by_word(word=target["text"], topn=count)
-    except:
-        return []
-
-    topN = list(map(lambda x: x[0], closestWords))
-
-    # Make the odd item the last item.
-    odd_one = model.doesnt_match(topN)
-    topN.remove(odd_one)
-    topN.append(odd_one)
-
-    return topN
-
-
-def get_similar_other(target, count=5, debug=False):
-    terms = target["text"].split()
-    if debug:
-        print("terms: ", terms)
-    try:
-        closestWords = model.most_similar(positive=terms, topn=count*10)
-    except:
-        if debug:
-            print("error getting most_similar")
-        return []
-
-    closestWords = list(map(lambda x: x[0], closestWords))
-    if debug:
-        print("closestWords: ", closestWords, " terms: ", terms)
-
-    # Returns true if Longest Common Substring between x, y is longer than half the length of either.
-    # TODO: Update to use a fuzzymatcher - https://pypi.org/project/fuzzywuzzy/
-    # (Beyonce, BeyBey) => true
-    # (Beyonce, yonce) => true
-    # (Beyonce, Jay-Z) => false
-    def is_reasonable_lcs(x, y): return SequenceMatcher(
-        None, x, y).find_longest_match(0, len(x), 0, len(y))[2] <= min(len(x), len(y))/2 and fuzz.ratio(x, y) < 80
-
-    def is_unique(arr, e):
-        e_lower = e.lower()
-        for x in arr:
-            if not is_reasonable_lcs(x.lower(), e_lower):
-                return False
-        return True
-    # equivalent_lambda = lambda arr, e: len([x for x in arr if not is_reasonable_lcs(x.lower(),e.lower())]) > 0
-
-    # Perform Longest Common Substring search over options with limit.
-    unique_options = terms.copy()
-    for x in closestWords:
-        if len(unique_options) >= count + len(terms):
-            break
-        if is_unique(unique_options, x):
-            unique_options.append(x)
-
-    if debug:
-        print("unique after LSC: ", unique_options, " terms: ", terms)
-
-    # Remove terms from options
-    for t in terms:
-        unique_options.remove(t)
-
-    return unique_options
 
 def resolve_corefs(text):
-    start = time.time()
-    
     # resolve co-references (the time grows at least exponentially with text length)
     corefParser = CoreNLPParser(sentences=text, annotators="dcoref")
-    print(corefParser.coref())
-    print("resolved co-refs: ", time.time() -start)
-
+    corefParser.coref()
+    
     # TODO: Update text.
     return text
+
 
 def trim_text(text):
     # remove text that doesn't add much to essence, in this case 10% of input text.
     return summarize(text, ratio=0.9)
 
+
 def run():
-    start = time.time()
+    logger.info("starting the whole shebang.")
 
     # get input text.
     paragraphs = paragraphs_local(args.input)
     text = paragraphs[0]
-    
+    logger.info("acquired input")
+
     # resolve co-refs: she -> Beyonce
     text = resolve_corefs(text)
-    print("resolved co-refs...", time.time() - start)
-    start = time.time()
-    
+    logger.info("resolved co-refs")
+
     text = trim_text(text)
-    print("trimmed text...", time.time() - start)
-    start = time.time()
+    logger.info("trimmed text")
 
     # parse text using CoreNLP Server.
     parser = CoreNLPParser(sentences=text)
-    print("parsed text...", time.time() - start)
-    start = time.time()
+    logger.info("parsed text")
 
     # get flat list of entities without Os.
     entities = parser.ent_flat()
-    print("entities: ", parser.ent_tags())
+    logger.debug("entities: %s", parser.ent_tags())
 
     # generate questions by replacing entities in sentences.
     questions = []
@@ -162,7 +85,7 @@ def run():
             question["prompt"] = sentence_str(
                 sent).replace(entity["text"], "_____")
             question["answer"] = entity["text"]
-            question["options"] = get_similar_entities(entity, entities)
+            question["options"] = get_similar_entities(entity)
             questions.append(question)
             if len(question["options"]) >= 4:
                 continue
@@ -178,7 +101,8 @@ def run():
 
     # TODO: score the prompt, answer and options.
 
-    print("Done...", time.time() - start)
+    logger.info("done")
 
 
-# run()
+if __name__ == "__main__":
+    run()

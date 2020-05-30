@@ -6,6 +6,7 @@ from fuzzywuzzy import fuzz
 from utils import *
 
 
+# For more on gensim models see https://github.com/RaRe-Technologies/gensim-data
 def most_similar(count=10, model_name="glove-wiki-gigaword-50", port=9100):
     logger = get_logger()
     logger.info("initializing process to serve model %s", model_name)
