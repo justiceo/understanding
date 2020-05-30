@@ -9,6 +9,7 @@ import gensim.downloader as api
 from gensim.summarization.summarizer import summarize
 from difflib import SequenceMatcher
 from fuzzywuzzy import fuzz
+from wiki_paragraphs import paragraphs_local
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", required=False,
@@ -21,17 +22,11 @@ parser.add_argument("--output", required=False,
 args = parser.parse_args()
 # For more on gensim models see https://github.com/RaRe-Technologies/gensim-data
 print("loading model...")
+start = time.time()
 model = api.load("fasttext-wiki-news-subwords-300")
+print("loaded model...", time.time() - start)
+start = time.time()
 space_regex = re.compile(r"\( ", re.IGNORECASE)
-
-
-def get_input():
-    with open(args.input, 'r') as file:
-        data = file.read()
-
-    # TODO: consider apply white-space fix.
-    # ' '.join(data.split())
-    return data
 
 
 def sentence_str(sentence):
@@ -138,7 +133,8 @@ def run():
     start = time.time()
 
     # get input text.
-    text = get_input()
+    paragraphs = paragraphs_local(args.input)
+    text = paragraphs[0]
     
     # resolve co-refs: she -> Beyonce
     text = resolve_corefs(text)

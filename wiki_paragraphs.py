@@ -26,6 +26,11 @@ def raw_text(url):
     data = os.popen('curl -s "{url}" | unfluff'.format(url=url))
     return json.load(data)["text"]
 
+def paragraphs_local(file_name):
+    with open(file_name, 'r') as file:
+        data = file.read()
+
+    return data.split("\n\n")
 
 def paragraphs(url):
     # If error, return empty list.
