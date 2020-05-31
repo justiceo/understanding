@@ -3,7 +3,7 @@
 #
 # Adapted from https://www.nltk.org/_modules/nltk/parse/corenlp.html
 import json
-from utils import fix_puntuations
+from utils import fix_punctuation
 
 
 class CoreNLPParser():
@@ -54,7 +54,7 @@ class CoreNLPParser():
         # Rebuild sentence list into paragraph.
         paragraph = " ".join([" ".join(s) for s in sents])
 
-        return fix_puntuations(paragraph)
+        return fix_punctuation(paragraph)
 
     def ent_tags(self):
         return [(e["text"], e["ner"]) for e in self.ent_flat()]

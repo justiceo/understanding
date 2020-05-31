@@ -37,16 +37,8 @@ def get_similar_entities(target):
 def resolve_corefs(text):
     # resolve co-references (the time grows at least exponentially with text length)
     corefParser = CoreNLPParser(sentences=text, annotators="dcoref")
-    corefParser.coref()
-
-    # TODO: Update text.
-    return text
-
-
-def resolve_corefs2(text):
-    # resolve co-references (the time grows at least exponentially with text length)
-    corefParser = CoreNLPParser(sentences=text, annotators="dcoref")
     return corefParser.coref()
+
 
 
 def trim_text(text):
@@ -59,7 +51,7 @@ def run():
 
     # get input text.
     paragraphs = paragraphs_local(args.input)
-    text = "\n".join(paragraphs[0:5])
+    text = "\n".join(paragraphs[0:2])
     logger.info("acquired input")
 
     # resolve co-refs: she -> Beyonce

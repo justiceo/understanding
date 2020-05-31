@@ -31,9 +31,10 @@ pre_space = re.compile(r"\s([.,\)\]?])")
 post_space = re.compile(r"([\[(])\s")
 quotation_space = re.compile(r"(\")\s(.*?)\s(\")")
 thin_quote_space = re.compile(r"\s('s)")
+dash_space = re.compile(r"\s(-)\s")
 
 
-def fix_puntuations(text):
+def fix_punctuation(text):
     # Replace ( 2018 ) with ( 2018)
     text = pre_space.sub(r'\1', text)
 
@@ -44,4 +45,6 @@ def fix_puntuations(text):
 
     text = thin_quote_space.sub(r'\1', text)
 
+    text = dash_space.sub(r'\1', text)
+    
     return text
