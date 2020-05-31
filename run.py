@@ -12,6 +12,7 @@ from fuzzywuzzy import fuzz
 from wiki_paragraphs import paragraphs_local
 from utils import *
 from gensim_client import most_similar
+from utils import fix_punctuation
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", required=False,
@@ -23,16 +24,9 @@ parser.add_argument("--output", required=False,
 args = parser.parse_args()
 logger = get_logger(__name__)
 
+
 def sentence_str(sentence):
-    if "parse" in sentence:
-        # This call is expensive ~10seconds! But if we already have it, it's accurate.
-        return " ".join(Tree.fromstring(sentence["parse"]).leaves())
-    else:
-        combined = " ".join([t["word"] for t in sentence["tokens"]])
-        # TODO: fix unnecessary spaces with regex replace.
-        # space_regex = re.compile(r"\( ", re.IGNORECASE)
-        # combined = space_regex.sub("\(", combined)
-        return combined
+    return fix_punctuation(" ".join([t["word"] for t in sentence["tokens"]]))
 
 
 def get_similar_entities(target):
@@ -44,9 +38,15 @@ def resolve_corefs(text):
     # resolve co-references (the time grows at least exponentially with text length)
     corefParser = CoreNLPParser(sentences=text, annotators="dcoref")
     corefParser.coref()
-    
+
     # TODO: Update text.
     return text
+
+
+def resolve_corefs2(text):
+    # resolve co-references (the time grows at least exponentially with text length)
+    corefParser = CoreNLPParser(sentences=text, annotators="dcoref")
+    return corefParser.coref()
 
 
 def trim_text(text):
@@ -59,7 +59,7 @@ def run():
 
     # get input text.
     paragraphs = paragraphs_local(args.input)
-    text = paragraphs[0]
+    text = "\n".join(paragraphs[0:5])
     logger.info("acquired input")
 
     # resolve co-refs: she -> Beyonce
