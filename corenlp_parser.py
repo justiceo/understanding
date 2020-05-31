@@ -34,7 +34,27 @@ class CoreNLPParser():
         return response.json()
 
     def coref(self):
-        return self.tagged_data["corefs"]
+        corefs = self.tagged_data["corefs"]
+
+        # Map corefs to { "representative_mention": [{"ref", "sent", "token"}]}
+        # Map corefs to {(sentNum, startIndex): rep_mention }
+        coref_map = {}
+        for gid, group in corefs.items():
+            rep_text = next(
+                (x["text"] for x in group if x["isRepresentativeMention"] and x["type"] != "PRONOMINAL"), None)
+            if rep_text is None:
+                continue
+            coref_map.update({(m["sentNum"], m["startIndex"])
+                             : rep_text for m in group if m["endIndex"] - m["startIndex"] == 1})
+
+        # Create sentences list replace any replaceables.
+        sents = [[coref_map.get((i+1, token["index"]), token["originalText"]) for token in sent["tokens"]] for i, sent in enumerate(self.tagged_data["sentences"])]
+
+        # Rebuild sentence list into paragraph.
+        paragraph = " ".join([" ".join(s) for s in sents])
+
+        # TODO: Fix puntuation spacings.
+        return paragraph
 
     def ent_tags(self):
         return [(e["text"], e["ner"]) for e in self.ent_flat()]

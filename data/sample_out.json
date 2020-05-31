@@ -1,0 +1,774 @@
+{
+  "sentences": [
+    {
+      "index": 0,
+      "parse": "(ROOT\n  (S (`` \")\n    (S\n      (NP (PRP I))\n      (VP (VBD voted)\n        (PP (IN for)\n          (NP (NNP Obama)))\n        (SBAR (IN because)\n          (S\n            (NP (PRP he))\n            (VP (VBD was)\n              (ADVP (RBS most))\n              (VP (VBN aligned)\n                (PP (IN with)\n                  (NP (PRP$ my) (NNS values) ('' \")))))))))\n    (, ,)\n    (NP (PRP she))\n    (VP (VBD said))\n    (. .)))",
+      "binaryParse": "(ROOT\n  (S (`` \")\n    (@S\n      (S\n        (NP (PRP I))\n        (VP\n          (@VP (VBD voted)\n            (PP (IN for)\n              (NP (NNP Obama))))\n          (SBAR (IN because)\n            (S\n              (NP (PRP he))\n              (VP\n                (@VP (VBD was)\n                  (ADVP (RBS most)))\n                (VP (VBN aligned)\n                  (PP (IN with)\n                    (NP (PRP$ my)\n                      (@NP (NNS values) ('' \"))))))))))\n      (@S (, ,)\n        (@S\n          (NP (PRP she))\n          (@S\n            (VP (VBD said))\n            (. .)))))))",
+      "basicDependencies": [
+        {
+          "dep": "ROOT",
+          "governor": 0,
+          "governorGloss": "ROOT",
+          "dependent": 17,
+          "dependentGloss": "said"
+        },
+        {
+          "dep": "punct",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 1,
+          "dependentGloss": "\""
+        },
+        {
+          "dep": "nsubj",
+          "governor": 3,
+          "governorGloss": "voted",
+          "dependent": 2,
+          "dependentGloss": "I"
+        },
+        {
+          "dep": "ccomp",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 3,
+          "dependentGloss": "voted"
+        },
+        {
+          "dep": "case",
+          "governor": 5,
+          "governorGloss": "Obama",
+          "dependent": 4,
+          "dependentGloss": "for"
+        },
+        {
+          "dep": "obl",
+          "governor": 3,
+          "governorGloss": "voted",
+          "dependent": 5,
+          "dependentGloss": "Obama"
+        },
+        {
+          "dep": "mark",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 6,
+          "dependentGloss": "because"
+        },
+        {
+          "dep": "nsubj:pass",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 7,
+          "dependentGloss": "he"
+        },
+        {
+          "dep": "aux:pass",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 8,
+          "dependentGloss": "was"
+        },
+        {
+          "dep": "advmod",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 9,
+          "dependentGloss": "most"
+        },
+        {
+          "dep": "advcl",
+          "governor": 3,
+          "governorGloss": "voted",
+          "dependent": 10,
+          "dependentGloss": "aligned"
+        },
+        {
+          "dep": "case",
+          "governor": 13,
+          "governorGloss": "values",
+          "dependent": 11,
+          "dependentGloss": "with"
+        },
+        {
+          "dep": "nmod:poss",
+          "governor": 13,
+          "governorGloss": "values",
+          "dependent": 12,
+          "dependentGloss": "my"
+        },
+        {
+          "dep": "obl",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 13,
+          "dependentGloss": "values"
+        },
+        {
+          "dep": "punct",
+          "governor": 13,
+          "governorGloss": "values",
+          "dependent": 14,
+          "dependentGloss": "\""
+        },
+        {
+          "dep": "punct",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 15,
+          "dependentGloss": ","
+        },
+        {
+          "dep": "nsubj",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 16,
+          "dependentGloss": "she"
+        },
+        {
+          "dep": "punct",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 18,
+          "dependentGloss": "."
+        }
+      ],
+      "enhancedDependencies": [
+        {
+          "dep": "ROOT",
+          "governor": 0,
+          "governorGloss": "ROOT",
+          "dependent": 17,
+          "dependentGloss": "said"
+        },
+        {
+          "dep": "punct",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 1,
+          "dependentGloss": "\""
+        },
+        {
+          "dep": "nsubj",
+          "governor": 3,
+          "governorGloss": "voted",
+          "dependent": 2,
+          "dependentGloss": "I"
+        },
+        {
+          "dep": "ccomp",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 3,
+          "dependentGloss": "voted"
+        },
+        {
+          "dep": "case",
+          "governor": 5,
+          "governorGloss": "Obama",
+          "dependent": 4,
+          "dependentGloss": "for"
+        },
+        {
+          "dep": "obl:for",
+          "governor": 3,
+          "governorGloss": "voted",
+          "dependent": 5,
+          "dependentGloss": "Obama"
+        },
+        {
+          "dep": "mark",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 6,
+          "dependentGloss": "because"
+        },
+        {
+          "dep": "nsubj:pass",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 7,
+          "dependentGloss": "he"
+        },
+        {
+          "dep": "aux:pass",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 8,
+          "dependentGloss": "was"
+        },
+        {
+          "dep": "advmod",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 9,
+          "dependentGloss": "most"
+        },
+        {
+          "dep": "advcl:because",
+          "governor": 3,
+          "governorGloss": "voted",
+          "dependent": 10,
+          "dependentGloss": "aligned"
+        },
+        {
+          "dep": "case",
+          "governor": 13,
+          "governorGloss": "values",
+          "dependent": 11,
+          "dependentGloss": "with"
+        },
+        {
+          "dep": "nmod:poss",
+          "governor": 13,
+          "governorGloss": "values",
+          "dependent": 12,
+          "dependentGloss": "my"
+        },
+        {
+          "dep": "obl:with",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 13,
+          "dependentGloss": "values"
+        },
+        {
+          "dep": "punct",
+          "governor": 13,
+          "governorGloss": "values",
+          "dependent": 14,
+          "dependentGloss": "\""
+        },
+        {
+          "dep": "punct",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 15,
+          "dependentGloss": ","
+        },
+        {
+          "dep": "nsubj",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 16,
+          "dependentGloss": "she"
+        },
+        {
+          "dep": "punct",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 18,
+          "dependentGloss": "."
+        }
+      ],
+      "enhancedPlusPlusDependencies": [
+        {
+          "dep": "ROOT",
+          "governor": 0,
+          "governorGloss": "ROOT",
+          "dependent": 17,
+          "dependentGloss": "said"
+        },
+        {
+          "dep": "punct",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 1,
+          "dependentGloss": "\""
+        },
+        {
+          "dep": "nsubj",
+          "governor": 3,
+          "governorGloss": "voted",
+          "dependent": 2,
+          "dependentGloss": "I"
+        },
+        {
+          "dep": "ccomp",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 3,
+          "dependentGloss": "voted"
+        },
+        {
+          "dep": "case",
+          "governor": 5,
+          "governorGloss": "Obama",
+          "dependent": 4,
+          "dependentGloss": "for"
+        },
+        {
+          "dep": "obl:for",
+          "governor": 3,
+          "governorGloss": "voted",
+          "dependent": 5,
+          "dependentGloss": "Obama"
+        },
+        {
+          "dep": "mark",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 6,
+          "dependentGloss": "because"
+        },
+        {
+          "dep": "nsubj:pass",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 7,
+          "dependentGloss": "he"
+        },
+        {
+          "dep": "aux:pass",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 8,
+          "dependentGloss": "was"
+        },
+        {
+          "dep": "advmod",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 9,
+          "dependentGloss": "most"
+        },
+        {
+          "dep": "advcl:because",
+          "governor": 3,
+          "governorGloss": "voted",
+          "dependent": 10,
+          "dependentGloss": "aligned"
+        },
+        {
+          "dep": "case",
+          "governor": 13,
+          "governorGloss": "values",
+          "dependent": 11,
+          "dependentGloss": "with"
+        },
+        {
+          "dep": "nmod:poss",
+          "governor": 13,
+          "governorGloss": "values",
+          "dependent": 12,
+          "dependentGloss": "my"
+        },
+        {
+          "dep": "obl:with",
+          "governor": 10,
+          "governorGloss": "aligned",
+          "dependent": 13,
+          "dependentGloss": "values"
+        },
+        {
+          "dep": "punct",
+          "governor": 13,
+          "governorGloss": "values",
+          "dependent": 14,
+          "dependentGloss": "\""
+        },
+        {
+          "dep": "punct",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 15,
+          "dependentGloss": ","
+        },
+        {
+          "dep": "nsubj",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 16,
+          "dependentGloss": "she"
+        },
+        {
+          "dep": "punct",
+          "governor": 17,
+          "governorGloss": "said",
+          "dependent": 18,
+          "dependentGloss": "."
+        }
+      ],
+      "entitymentions": [
+        {
+          "docTokenBegin": 4,
+          "docTokenEnd": 5,
+          "tokenBegin": 4,
+          "tokenEnd": 5,
+          "text": "Obama",
+          "characterOffsetBegin": 13,
+          "characterOffsetEnd": 18,
+          "ner": "PERSON",
+          "nerConfidences": {
+            "PERSON": 0.99602130140636
+          }
+        },
+        {
+          "docTokenBegin": 6,
+          "docTokenEnd": 7,
+          "tokenBegin": 6,
+          "tokenEnd": 7,
+          "text": "he",
+          "characterOffsetBegin": 27,
+          "characterOffsetEnd": 29,
+          "ner": "PERSON"
+        },
+        {
+          "docTokenBegin": 15,
+          "docTokenEnd": 16,
+          "tokenBegin": 15,
+          "tokenEnd": 16,
+          "text": "she",
+          "characterOffsetBegin": 64,
+          "characterOffsetEnd": 67,
+          "ner": "PERSON"
+        }
+      ],
+      "tokens": [
+        {
+          "index": 1,
+          "word": "\"",
+          "originalText": "\"",
+          "lemma": "\"",
+          "characterOffsetBegin": 0,
+          "characterOffsetEnd": 1,
+          "pos": "``",
+          "ner": "O",
+          "speaker": "PER0",
+          "before": "",
+          "after": ""
+        },
+        {
+          "index": 2,
+          "word": "I",
+          "originalText": "I",
+          "lemma": "I",
+          "characterOffsetBegin": 1,
+          "characterOffsetEnd": 2,
+          "pos": "PRP",
+          "ner": "O",
+          "speaker": "6",
+          "before": "",
+          "after": " "
+        },
+        {
+          "index": 3,
+          "word": "voted",
+          "originalText": "voted",
+          "lemma": "vote",
+          "characterOffsetBegin": 3,
+          "characterOffsetEnd": 8,
+          "pos": "VBD",
+          "ner": "O",
+          "speaker": "6",
+          "before": " ",
+          "after": " "
+        },
+        {
+          "index": 4,
+          "word": "for",
+          "originalText": "for",
+          "lemma": "for",
+          "characterOffsetBegin": 9,
+          "characterOffsetEnd": 12,
+          "pos": "IN",
+          "ner": "O",
+          "speaker": "6",
+          "before": " ",
+          "after": " "
+        },
+        {
+          "index": 5,
+          "word": "Obama",
+          "originalText": "Obama",
+          "lemma": "Obama",
+          "characterOffsetBegin": 13,
+          "characterOffsetEnd": 18,
+          "pos": "NNP",
+          "ner": "PERSON",
+          "speaker": "6",
+          "before": " ",
+          "after": " "
+        },
+        {
+          "index": 6,
+          "word": "because",
+          "originalText": "because",
+          "lemma": "because",
+          "characterOffsetBegin": 19,
+          "characterOffsetEnd": 26,
+          "pos": "IN",
+          "ner": "O",
+          "speaker": "6",
+          "before": " ",
+          "after": " "
+        },
+        {
+          "index": 7,
+          "word": "he",
+          "originalText": "he",
+          "lemma": "he",
+          "characterOffsetBegin": 27,
+          "characterOffsetEnd": 29,
+          "pos": "PRP",
+          "ner": "O",
+          "speaker": "6",
+          "before": " ",
+          "after": " "
+        },
+        {
+          "index": 8,
+          "word": "was",
+          "originalText": "was",
+          "lemma": "be",
+          "characterOffsetBegin": 30,
+          "characterOffsetEnd": 33,
+          "pos": "VBD",
+          "ner": "O",
+          "speaker": "6",
+          "before": " ",
+          "after": " "
+        },
+        {
+          "index": 9,
+          "word": "most",
+          "originalText": "most",
+          "lemma": "most",
+          "characterOffsetBegin": 34,
+          "characterOffsetEnd": 38,
+          "pos": "RBS",
+          "ner": "O",
+          "speaker": "6",
+          "before": " ",
+          "after": " "
+        },
+        {
+          "index": 10,
+          "word": "aligned",
+          "originalText": "aligned",
+          "lemma": "align",
+          "characterOffsetBegin": 39,
+          "characterOffsetEnd": 46,
+          "pos": "VBN",
+          "ner": "O",
+          "speaker": "6",
+          "before": " ",
+          "after": " "
+        },
+        {
+          "index": 11,
+          "word": "with",
+          "originalText": "with",
+          "lemma": "with",
+          "characterOffsetBegin": 47,
+          "characterOffsetEnd": 51,
+          "pos": "IN",
+          "ner": "O",
+          "speaker": "6",
+          "before": " ",
+          "after": " "
+        },
+        {
+          "index": 12,
+          "word": "my",
+          "originalText": "my",
+          "lemma": "my",
+          "characterOffsetBegin": 52,
+          "characterOffsetEnd": 54,
+          "pos": "PRP$",
+          "ner": "O",
+          "speaker": "6",
+          "before": " ",
+          "after": " "
+        },
+        {
+          "index": 13,
+          "word": "values",
+          "originalText": "values",
+          "lemma": "value",
+          "characterOffsetBegin": 55,
+          "characterOffsetEnd": 61,
+          "pos": "NNS",
+          "ner": "O",
+          "speaker": "6",
+          "before": " ",
+          "after": ""
+        },
+        {
+          "index": 14,
+          "word": "\"",
+          "originalText": "\"",
+          "lemma": "\"",
+          "characterOffsetBegin": 61,
+          "characterOffsetEnd": 62,
+          "pos": "''",
+          "ner": "O",
+          "speaker": "PER0",
+          "before": "",
+          "after": ""
+        },
+        {
+          "index": 15,
+          "word": ",",
+          "originalText": ",",
+          "lemma": ",",
+          "characterOffsetBegin": 62,
+          "characterOffsetEnd": 63,
+          "pos": ",",
+          "ner": "O",
+          "speaker": "PER0",
+          "before": "",
+          "after": " "
+        },
+        {
+          "index": 16,
+          "word": "she",
+          "originalText": "she",
+          "lemma": "she",
+          "characterOffsetBegin": 64,
+          "characterOffsetEnd": 67,
+          "pos": "PRP",
+          "ner": "O",
+          "speaker": "PER0",
+          "before": " ",
+          "after": " "
+        },
+        {
+          "index": 17,
+          "word": "said",
+          "originalText": "said",
+          "lemma": "say",
+          "characterOffsetBegin": 68,
+          "characterOffsetEnd": 72,
+          "pos": "VBD",
+          "ner": "O",
+          "speaker": "PER0",
+          "before": " ",
+          "after": ""
+        },
+        {
+          "index": 18,
+          "word": ".",
+          "originalText": ".",
+          "lemma": ".",
+          "characterOffsetBegin": 72,
+          "characterOffsetEnd": 73,
+          "pos": ".",
+          "ner": "O",
+          "speaker": "PER0",
+          "before": "",
+          "after": ""
+        }
+      ]
+    }
+  ],
+  "corefs": {
+    "1": [
+      {
+        "id": 1,
+        "text": "Obama",
+        "type": "PROPER",
+        "number": "SINGULAR",
+        "gender": "MALE",
+        "animacy": "ANIMATE",
+        "startIndex": 5,
+        "endIndex": 6,
+        "headIndex": 5,
+        "sentNum": 1,
+        "position": [
+          1,
+          2
+        ],
+        "isRepresentativeMention": true
+      },
+      {
+        "id": 3,
+        "text": "he",
+        "type": "PRONOMINAL",
+        "number": "SINGULAR",
+        "gender": "MALE",
+        "animacy": "ANIMATE",
+        "startIndex": 7,
+        "endIndex": 8,
+        "headIndex": 7,
+        "sentNum": 1,
+        "position": [
+          1,
+          3
+        ],
+        "isRepresentativeMention": false
+      }
+    ],
+    "2": [
+      {
+        "id": 2,
+        "text": "I",
+        "type": "PRONOMINAL",
+        "number": "SINGULAR",
+        "gender": "UNKNOWN",
+        "animacy": "ANIMATE",
+        "startIndex": 2,
+        "endIndex": 3,
+        "headIndex": 2,
+        "sentNum": 1,
+        "position": [
+          1,
+          1
+        ],
+        "isRepresentativeMention": true
+      },
+      {
+        "id": 5,
+        "text": "my",
+        "type": "PRONOMINAL",
+        "number": "SINGULAR",
+        "gender": "UNKNOWN",
+        "animacy": "ANIMATE",
+        "startIndex": 12,
+        "endIndex": 13,
+        "headIndex": 12,
+        "sentNum": 1,
+        "position": [
+          1,
+          5
+        ],
+        "isRepresentativeMention": false
+      },
+      {
+        "id": 6,
+        "text": "she",
+        "type": "PRONOMINAL",
+        "number": "SINGULAR",
+        "gender": "FEMALE",
+        "animacy": "ANIMATE",
+        "startIndex": 16,
+        "endIndex": 17,
+        "headIndex": 16,
+        "sentNum": 1,
+        "position": [
+          1,
+          6
+        ],
+        "isRepresentativeMention": false
+      }
+    ],
+    "4": [
+      {
+        "id": 4,
+        "text": "my values \"",
+        "type": "NOMINAL",
+        "number": "PLURAL",
+        "gender": "UNKNOWN",
+        "animacy": "INANIMATE",
+        "startIndex": 12,
+        "endIndex": 15,
+        "headIndex": 13,
+        "sentNum": 1,
+        "position": [
+          1,
+          4
+        ],
+        "isRepresentativeMention": true
+      }
+    ]
+  }
+}
