@@ -1,3 +1,4 @@
+# Usage: python3 gensim_server.py
 from multiprocessing.managers import BaseManager
 import queue
 import gensim.downloader as api
