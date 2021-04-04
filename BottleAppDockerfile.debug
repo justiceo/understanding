@@ -1,0 +1,18 @@
+# Author: Moeez Saiyam
+
+FROM ubuntu:bionic
+
+RUN apt-get update -y
+RUN apt-get update && apt-get install -y \
+    python3.7-dev \
+    python3.7-venv \
+    python3-pip
+
+COPY . .
+
+RUN python3 -m pip install bottle
+RUN python3 -m pip install nltk
+RUN python3 -m pip install python-Levenshtein
+
+
+ENTRYPOINT ["python3", "main.py"]
