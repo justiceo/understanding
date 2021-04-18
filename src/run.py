@@ -6,7 +6,7 @@ from nltk.tree import Tree
 from corenlp_parser import CoreNLPParser
 import re
 import gensim.downloader as api
-from gensim.summarization.summarizer import summarize
+# from gensim.summarization.summarizer import summarize
 from difflib import SequenceMatcher
 from fuzzywuzzy import fuzz
 from wiki_paragraphs import paragraphs_local
@@ -43,7 +43,7 @@ def resolve_corefs(text):
 
 def trim_text(text):
     # remove text that doesn't add much to essence, in this case 10% of input text.
-    return summarize(text, ratio=0.9)
+    return text # summarize(text, ratio=0.9)
 
 
 def run():
@@ -98,3 +98,4 @@ def run():
 
 if __name__ == "__main__":
     logger.info("$ run()")
+    run()
