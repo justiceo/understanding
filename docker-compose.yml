@@ -1,0 +1,15 @@
+version: "3.3"
+services:
+    web:
+        build: .
+        ports:
+            - "5000:5000"
+    corenlp:
+        image: "nlpbox/corenlp"
+        ports:
+            - "9000:9000"
+    spacyapi:
+        image: jgontrum/spacyapi:en_v2
+        ports:
+          - "8080:80"
+        restart: always
