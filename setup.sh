@@ -10,15 +10,16 @@ poetry install
 which java || sudo apt install default-jre
 
 # Download and unpack the JAR files.
-if [ ! -d "./stanford-corenlp-4.2.0" ]
+if [ ! -d "./stanford-corenlp" ]
 then
+    mkdir stanford-corenlp
     wget http://nlp.stanford.edu/software/stanford-corenlp-latest.zip
-    unzip stanford-corenlp-latest.zip
+    unzip stanford-corenlp-latest.zip -d stanford-corenlp
     rm stanford-corenlp-latest.zip
 fi
 
 # Set the classpath.
-cd stanford-corenlp-4.2.0
+cd stanford-corenlp
 for file in `find . -name "*.jar"`; do 
     export CLASSPATH="$CLASSPATH:`realpath $file`"; 
 done
