@@ -3,7 +3,7 @@ import argparse
 import os
 import time
 from nltk.tree import Tree
-from corenlp_parser import CoreNLPParser
+from models.corenlp import CoreNLP
 import re
 import gensim.downloader as api
 # from gensim.summarization.summarizer import summarize
@@ -23,7 +23,8 @@ parser.add_argument("--output", required=False,
                     help="File to write JSON list of questions")
 args = parser.parse_args()
 logger = get_logger(__name__)
-
+coreNLP = CoreNLP()
+coreNLP.init()
 
 def sentence_str(sentence):
     return fix_punctuation(" ".join([t["word"] for t in sentence["tokens"]]))
@@ -36,8 +37,8 @@ def get_similar_entities(target):
 
 def resolve_corefs(text):
     # resolve co-references (the time grows at least exponentially with text length)
-    corefParser = CoreNLPParser(sentences=text, annotators="dcoref")
-    return corefParser.coref()
+    tagged_data = coreNLP.coref(sentences=text, annotators="dcoref")
+    return ent_tags(tagged_data)
 
 
 
@@ -45,6 +46,22 @@ def trim_text(text):
     # remove text that doesn't add much to essence, in this case 10% of input text.
     return text # summarize(text, ratio=0.9)
 
+def ent_tags(tagged_data):
+        return [(e["text"], e["ner"]) for e in ent_flat(tagged_data)]
+
+def ent_flat( tagged_data):
+    return [
+        ent for ent_group in ents(tagged_data) for ent in ent_group if ent["ner"] != "O"
+    ]
+
+def ents( tagged_data):
+    return [
+        [t for t in tagged_sentence["entitymentions"]]
+        for tagged_sentence in tagged_data["sentences"]
+    ]
+
+def sents(tagged_data):
+    return tagged_data["sentences"]
 
 def run():
     logger.info("starting the whole shebang.")
@@ -62,16 +79,15 @@ def run():
     logger.info("trimmed text")
 
     # parse text using CoreNLP Server.
-    parser = CoreNLPParser(sentences=text)
+    tagged_data = coreNLP.ner(text)
     logger.info("parsed text")
 
-    # get flat list of entities without Os.
-    entities = parser.ent_flat()
-    logger.debug("entities: %s", parser.ent_tags())
+    # get flat list of entities without Os
+    logger.debug("entities: %s", ent_tags(tagged_data))
 
     # generate questions by replacing entities in sentences.
     questions = []
-    for sent in parser.sents():
+    for sent in sents(tagged_data):
         for entity in sent["entitymentions"]:
             question = {}
             question["prompt"] = sentence_str(

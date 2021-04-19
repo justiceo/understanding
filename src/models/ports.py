@@ -1,0 +1,2 @@
+
+CORE_NLP_PORT: int = 9000
