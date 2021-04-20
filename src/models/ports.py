@@ -1,2 +1,3 @@
 
 CORE_NLP_PORT: int = 9000
+GENSIM_PORT: int = 9100
