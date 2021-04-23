@@ -16,7 +16,7 @@ from utils import fix_punctuation
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", required=False,
-                    default='data/beyonce.txt',
+                    default='../data/beyonce.txt',
                     help="Plain text file with text for generating questions.")
 parser.add_argument("--output", required=False,
                     default='data/sample_out.text',

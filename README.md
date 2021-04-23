@@ -1,7 +1,7 @@
 # Question Generator
 
 ## Setup
-1. Install docker
+1. Install docker and docker-compose
 2. Run `docker-compose up`
 3. Install poetry `which poetry || pip3 install poetry`
 4. Install project dependencies `poetry install`

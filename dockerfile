@@ -12,16 +12,18 @@ ENV QG_ENV=${QG_ENV} \
   PIP_DEFAULT_TIMEOUT=100 \
   POETRY_VERSION=1.0.0
 
+RUN python3 --version
+
 # System deps:
-RUN pip install "poetry==$POETRY_VERSION"
+RUN pip3 install "poetry==$POETRY_VERSION"
 
 # Copy only requirements to cache them in docker layer
 WORKDIR /code
-COPY poetry.lock pyproject.toml /code/
+COPY poetry.lock pyproject.toml ./
 
 # Project initialization:
 RUN poetry config virtualenvs.create false \
-  && poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
+  && poetry install $(test "$QG_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
 
 # Creating folders, and files for a project:
-COPY . /code
+COPY . .
