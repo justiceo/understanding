@@ -3,14 +3,12 @@ import os
 import time
 from nltk.tree import Tree
 from models.corenlp import CoreNLP
+from models.gensim import Gensim
 import re
-
-# from gensim.summarization.summarizer import summarize
 from difflib import SequenceMatcher
 from fuzzywuzzy import fuzz
 from wiki_paragraphs import paragraphs_local
 from utils import *
-from gensim_client import most_similar
 from utils import fix_punctuation
 
 parser = argparse.ArgumentParser()
@@ -30,6 +28,8 @@ args = parser.parse_args()
 logger = get_logger(__name__)
 coreNLP = CoreNLP()
 coreNLP.init()
+gensim = Gensim()
+gensim.init()
 
 
 def sentence_str(sentence):
@@ -38,7 +38,7 @@ def sentence_str(sentence):
 
 def get_similar_entities(target):
     # TODO: Update to differentiate numericals.
-    return most_similar(target["text"].split())
+    return gensim.most_similar(target["text"].split())
 
 
 def resolve_corefs(text):
