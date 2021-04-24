@@ -69,6 +69,14 @@ optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
+name = "decorator"
+version = "5.0.7"
+description = "Decorators for Humans"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[[package]]
 name = "fuzzywuzzy"
 version = "0.18.0"
 description = "Fuzzy string matching in python"
@@ -258,6 +266,14 @@ python-versions = ">=3.7"
 numpy = ">=1.16.5"
 
 [[package]]
+name = "six"
+version = "1.15.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
 name = "smart-open"
 version = "5.0.0"
 description = "Utils for streaming large files (S3, HDFS, GCS, Azure Blob Storage, gzip, bz2...)"
@@ -308,10 +324,25 @@ secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "cer
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 brotli = ["brotlipy (>=0.6.0)"]
 
+[[package]]
+name = "validators"
+version = "0.18.2"
+description = "Python Data Validation for Humans™."
+category = "main"
+optional = false
+python-versions = ">=3.4"
+
+[package.dependencies]
+decorator = ">=3.4.0"
+six = ">=1.4.0"
+
+[package.extras]
+test = ["pytest (>=2.2.3)", "flake8 (>=2.4.0)", "isort (>=4.2.2)"]
+
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "71f0d2d331c1c882ef58f1849d9855666f805273bc00abf160812bb459251d90"
+content-hash = "91aabd5211ce88e3bc32c6c0efa0a599aaf7d30d254e80295c4e2603229638b8"
 
 [metadata.files]
 argparse = [
@@ -378,6 +409,10 @@ cython = [
     {file = "Cython-0.29.21-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:c111ac9abdf715762e4fb87395e59d61c0fbb6ce79eb2e24167700b6cfa8ba79"},
     {file = "Cython-0.29.21-py2.py3-none-any.whl", hash = "sha256:5c4276fdcbccdf1e3c1756c7aeb8395e9a36874fa4d30860e7694f43d325ae13"},
     {file = "Cython-0.29.21.tar.gz", hash = "sha256:e57acb89bd55943c8d8bf813763d20b9099cc7165c0f16b707631a7654be9cad"},
+]
+decorator = [
+    {file = "decorator-5.0.7-py3-none-any.whl", hash = "sha256:945d84890bb20cc4a2f4a31fc4311c0c473af65ea318617f13a7257c9a58bc98"},
+    {file = "decorator-5.0.7.tar.gz", hash = "sha256:6f201a6c4dac3d187352661f508b9364ec8091217442c9478f1f83c003a0f060"},
 ]
 fuzzywuzzy = [
     {file = "fuzzywuzzy-0.18.0-py2.py3-none-any.whl", hash = "sha256:928244b28db720d1e0ee7587acf660ea49d7e4c632569cad4f1cd7e68a5f0993"},
@@ -528,6 +563,10 @@ scipy = [
     {file = "scipy-1.6.1-cp39-cp39-win_amd64.whl", hash = "sha256:a5193a098ae9f29af283dcf0041f762601faf2e595c0db1da929875b7570353f"},
     {file = "scipy-1.6.1.tar.gz", hash = "sha256:c4fceb864890b6168e79b0e714c585dbe2fd4222768ee90bc1aa0f8218691b11"},
 ]
+six = [
+    {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
+    {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
+]
 smart-open = [
     {file = "smart_open-5.0.0-py3-none-any.whl", hash = "sha256:ed310ac51a797051b42f9437a566ac8149a3abf8c80ab994a8bd92d96fb7cf44"},
     {file = "smart_open-5.0.0.tar.gz", hash = "sha256:02e5e02207d955a1f9fd924c37900ac272536bd24393ae731b6945d4f766015f"},
@@ -543,4 +582,8 @@ tqdm = [
 urllib3 = [
     {file = "urllib3-1.26.4-py2.py3-none-any.whl", hash = "sha256:2f4da4594db7e1e110a944bb1b551fdf4e6c136ad42e4234131391e21eb5b0df"},
     {file = "urllib3-1.26.4.tar.gz", hash = "sha256:e7b021f7241115872f92f43c6508082facffbd1c048e3c6e2bb9c2a157e28937"},
+]
+validators = [
+    {file = "validators-0.18.2-py3-none-any.whl", hash = "sha256:0143dcca8a386498edaf5780cbd5960da1a4c85e0719f3ee5c9b41249c4fefbd"},
+    {file = "validators-0.18.2.tar.gz", hash = "sha256:37cd9a9213278538ad09b5b9f9134266e7c226ab1fede1d500e29e0a8fbb9ea6"},
 ]
