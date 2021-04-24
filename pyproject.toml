@@ -6,7 +6,7 @@ authors = ["Justice Ogbonna"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 gensim = "^4.0.1"
 nltk = "^3.6.1"
 fuzzywuzzy = "^0.18.0"

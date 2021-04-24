@@ -1,42 +1,41 @@
+from typing import Callable, Any, TypeVar, Generic, Optional, Union
 import threading
+import queue
 
-try:
-    import queue
-except ImportError:
-    import Queue as queue  # Python2 support
+T = TypeVar("T")
 
 
-class Publisher(object):
-    def __init__(self, puppy, topic):
+class Publisher(Generic[T]):
+    def __init__(self, puppy, topics: list[str]):
         self.puppy = puppy
-        self.topic = topic
+        self.topic = topics
 
-    def send(self, data):
+    def send(self, data: T):
         self.puppy.inject(self.topic, data)
 
 
-class SubscriberPush(object):
-    def __init__(self, callback):
+class SubscriberPush(Generic[T]):
+    def __init__(self, callback: Callable):
         self.callback = callback
 
-    def send(self, data):
+    def send(self, data: T):
         self.callback(data)
 
 
-class SubscriberPull(object):
+class SubscriberPull(Generic[T]):
     def __init__(self):
         self.q = queue.Queue()
 
-    def send(self, data):
+    def send(self, data: T):
         self.q.put(data)
 
-    def recv(self):
+    def recv(self) -> Optional[T]:
         try:
             return self.q.get(block=False)
         except:
             return None
 
-    def recv_all(self):
+    def recv_all(self) -> list[T]:
         resp = []
         while True:
             e = self.recv()
@@ -47,13 +46,13 @@ class SubscriberPull(object):
         return resp
 
 
-class Topic(object):
-    def __init__(self, name, parent=None):
+class Topic(Generic[T]):
+    def __init__(self, name: str, parent=None):
         self.name = name
         self.sub = []
         self.parent = parent
 
-    def send(self, data):
+    def send(self, data: T):
         for s, f in self.sub:
             if f != None:
                 try:
@@ -70,14 +69,14 @@ class Topic(object):
         if self.parent:
             self.parent.send(data)
 
-    def add_sub_push(self, f, filter=None):
+    def add_sub_push(self, f: Callable[[Any], Any], filter=None):
         self.sub.append((SubscriberPush(f), filter))
 
-    def add_sub_pull(self, s, filter=None):
+    def add_sub_pull(self, s: SubscriberPull, filter=None):
         self.sub.append((s, filter))
 
 
-def sanitize_topics(topic, delim):
+def sanitize_topics(topic: Union[str, list[str]], delim: str):
     """
     >>> sanitize_topics(['aaa','aaa/bbb','aaa/bbb/ccc'],'/')
     ['aaa', 'aaa/bbb', 'aaa/bbb/ccc']
@@ -116,16 +115,16 @@ def get_parent_child(topic, delim):
     return temp
 
 
-class Puppy(object):
-    def __init__(self, delim="/"):
+class Puppy(Generic[T]):
+    def __init__(self, delim: str = "/"):
         assert isinstance(delim, str)
         assert len(delim) == 1
         self.delim = delim
 
-        self.topic = {"": Topic("")}
+        self.topic: dict[str, Topic] = {"": Topic("")}
 
-    def Pub(self, topics):
-        topics = sanitize_topics(topics, self.delim)
+    def Pub(self, topics1: str) -> Publisher:
+        topics = sanitize_topics(topics1, self.delim)
 
         for t in topics:
             for a, b in get_parent_child(t, self.delim):
@@ -134,13 +133,13 @@ class Puppy(object):
 
         return Publisher(self, topics)
 
-    def SubPush(self, topics, f, filter=None):
+    def SubPush(self, topics: list[str], f: Callable[[Any], Any], filter=None):
         topics = sanitize_topics(topics, self.delim)
 
         for t in topics:
             self.topic[t].add_sub_push(f, filter)
 
-    def SubPull(self, topics, filter=None):
+    def SubPull(self, topics: list[str], filter=None):
         topics = sanitize_topics(topics, self.delim)
 
         s = SubscriberPull()
@@ -149,7 +148,7 @@ class Puppy(object):
 
         return s
 
-    def inject(self, topics, data):
+    def inject(self, topics: list[str], data: T):
         topics = sanitize_topics(topics, self.delim)
 
         for t in topics:

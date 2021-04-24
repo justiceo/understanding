@@ -1,6 +1,6 @@
 import time
 
-from src.puppy.puppy import *
+from src.puppy.puppy import Puppy
 
 
 def test__basic():
