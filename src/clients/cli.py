@@ -4,8 +4,10 @@ import os.path
 from shutil import which
 import json
 import validators
+import orchestrator
 
-QG_PORT = 9200
+class QueueManager(BaseManager):
+    pass
 
 
 class Cli:
@@ -36,8 +38,11 @@ class Cli:
             "url": self.get_url_input,
         }
 
-        self.manager = BaseManager(
-            address=("localhost", QG_PORT), authkey=b"random auth"
+        QueueManager.register(orchestrator.INPUT_QUEUE_NAME)
+        QueueManager.register(orchestrator.OUTPUT_QUEUE_NAME)
+        self.manager = QueueManager(
+            address=(orchestrator.ORCHESTRATOR_HOST, orchestrator.ORCHESTRATOR_PORT),
+            authkey=b"random auth",
         )
         self.manager.connect()
         print("Connected to process on port: " + str(QG_PORT))
@@ -49,10 +54,8 @@ class Cli:
         return response_queue.get()
 
     def get_queues(self):
-        BaseManager.register("requests")
-        BaseManager.register("responses")
 
-        return (self.manager.requests(), self.manager.responses())
+        return (self.manager.request(), self.manager.response())
 
     def extract_text(self):
         return self.input_fn_dict[self.args.input_type]()

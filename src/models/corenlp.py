@@ -22,6 +22,8 @@ class CoreNLP:
 
     def coref(self, sentences, encoding="utf8"):
         """
+
+        FYI: Time grows at least exponentially with text length.
         TODO: Remove the implementation details below.
         """
         tagged_data = self.__for_annotators(sentences, "dcoref", encoding)
