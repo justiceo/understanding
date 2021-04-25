@@ -14,10 +14,10 @@ class Latch(object):
 
 def test__basic():
     pupper = Puppy()
-    pub = pupper.Publisher("topic1")
+    pub = pupper.Publisher("topic1/")
 
     latch = Latch()
-    pupper.Subscribe("topic1", latch.set)
+    pupper.Subscribe("/topic1", latch.set)
 
     assert latch.value == None
     pub.send("hello")
