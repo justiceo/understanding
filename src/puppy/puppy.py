@@ -95,6 +95,7 @@ class Puppy(Generic[T]):
         self.delim = delim
 
         self.topic: dict[str, Topic] = {"": Topic("")}
+        self.published_topics = [""]
 
     def Publisher(self, topics1: str) -> Publisher:
         topics = sanitize_topics(topics1, self.delim)
@@ -103,6 +104,7 @@ class Puppy(Generic[T]):
             for a, b in get_parent_child(t, self.delim):
                 if b not in self.topic.keys():
                     self.topic[b] = Topic(name=b, parent=self.topic[a])
+                    self.published_topics.append(b)
 
         return Publisher(self, topics)
 
@@ -123,6 +125,5 @@ class Puppy(Generic[T]):
         for t in topics:
             self.topic[t].send(data)
 
-    def verify(self):
-        # TODO: check that all topics have both publishers and subscribers
-        pass
+    def verify(self) -> bool:
+        return self.published_topics == [*self.topic]

@@ -28,6 +28,7 @@ def test__basic():
     time.sleep(0.1)
     assert latch.value == "world"
     assert latch.all_values == ["hello", "world"]
+    assert pupper.verify()
 
 
 def test__multiple_children():
@@ -51,6 +52,7 @@ def test__multiple_children():
     assert latch1.all_values == ["hello-1", "world-1"]
     assert latch2.all_values == ["hello-2", "world-2"]
     assert latchP.all_values == ["hello-1", "world-1", "hello-2", "world-2"]
+    assert pupper.verify()
 
 
 def test__multiple_publishers():
@@ -65,6 +67,7 @@ def test__multiple_publishers():
     pub2.send("world")
     time.sleep(0.1)
     latch.all_values == ["hello", "world"]
+    assert pupper.verify()
 
 
 def test__multiple_subscribers():
@@ -81,6 +84,7 @@ def test__multiple_subscribers():
 
     assert latch1.all_values == ["hello"]
     assert latch2.all_values == ["hello"]
+    assert pupper.verify()
 
 
 def test__filter():
@@ -97,6 +101,7 @@ def test__filter():
     pub.send("abcd")
     time.sleep(0.1)
     assert latch.all_values == ["abc", "abcd"]
+    assert pupper.verify()
 
 
 def test__verify():
