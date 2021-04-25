@@ -3,123 +3,22 @@ import time
 from src.puppy.puppy import Puppy
 
 
-def test__basic():
-    pupper = Puppy()
-
-    pub = pupper.Pub("topic1")
-    sub = pupper.SubPull("topic1")
-
-    pub.send("hello")
-    time.sleep(0.1)
-    assert sub.recv() == "hello"
-    assert sub.recv() is None
-
-
-def test__recv_all():
-    pupper = Puppy()
-
-    pub = pupper.Pub("topic1")
-    sub = pupper.SubPull("topic1")
-
-    pub.send("hello")
-    time.sleep(0.1)
-    assert sub.recv_all() == ["hello"]
-    assert sub.recv_all() == []
-
-    pub.send("world")
-    time.sleep(0.1)
-    assert sub.recv_all() == ["world"]
-    assert sub.recv_all() == []
-
-
-def test__parenting():
-    pupper = Puppy()
-
-    pub = pupper.Pub("topic1")
-    subC = pupper.SubPull("topic1")
-    subP = pupper.SubPull("")
-
-    pub.send("hello")
-    pub.send("world")
-    time.sleep(0.1)
-    assert subC.recv_all() == ["hello", "world"]
-    assert subP.recv_all() == ["hello", "world"]
-    assert subC.recv_all() == []
-    assert subP.recv_all() == []
-
-
-def test__multiple_children():
-    pupper = Puppy()
-
-    pub1 = pupper.Pub("topic1")
-    pub2 = pupper.Pub("topic2")
-
-    subC1 = pupper.SubPull("topic1")
-    subC2 = pupper.SubPull("topic2")
-    subP = pupper.SubPull("")
-
-    pub1.send("hello-1")
-    pub1.send("world-1")
-    pub2.send("hello-2")
-    pub2.send("world-2")
-    time.sleep(0.1)
-    assert subC1.recv_all() == ["hello-1", "world-1"]
-    assert subC1.recv_all() == []
-
-    assert subC2.recv_all() == ["hello-2", "world-2"]
-    assert subC2.recv_all() == []
-
-    assert subP.recv_all() == ["hello-1", "world-1", "hello-2", "world-2"]
-    assert subP.recv_all() == []
-
-
-def test__multiple_publishers():
-    pupper = Puppy()
-
-    pub1 = pupper.Pub("topic1")
-    pub2 = pupper.Pub("topic1")
-    sub = pupper.SubPull("topic1")
-
-    pub1.send("hello")
-    pub2.send("world")
-    time.sleep(0.1)
-    assert sub.recv_all() == ["hello", "world"]
-    assert sub.recv_all() == []
-
-
-def test__multiple_subscribers():
-    pupper = Puppy()
-
-    pub = pupper.Pub("topic1")
-    sub1 = pupper.SubPull("topic1")
-    sub2 = pupper.SubPull("topic1")
-
-    pub.send("hello")
-    time.sleep(0.1)
-
-    assert sub1.recv_all() == ["hello"]
-    assert sub1.recv_all() == []
-
-    assert sub2.recv_all() == ["hello"]
-    assert sub2.recv_all() == []
-
-
 class Latch(object):
     def __init__(self):
         self.value = None
+        self.all_values = []
 
     def set(self, e):
         self.value = e
+        self.all_values.append(e)
 
 
-def test__push_subscribe():
+def test__basic():
     pupper = Puppy()
+    pub = pupper.Publisher("topic1")
 
     latch = Latch()
-
-    pub = pupper.Pub("topic1")
-
-    pupper.SubPush("topic1", latch.set)
+    pupper.Subscribe("topic1", latch.set)
 
     assert latch.value == None
     pub.send("hello")
@@ -128,21 +27,76 @@ def test__push_subscribe():
     pub.send("world")
     time.sleep(0.1)
     assert latch.value == "world"
+    assert latch.all_values == ["hello", "world"]
+
+
+def test__multiple_children():
+    pupper = Puppy()
+
+    pub1 = pupper.Publisher("topic1")
+    pub2 = pupper.Publisher("topic2")
+
+    latch1 = Latch()
+    latch2 = Latch()
+    latchP = Latch()
+    pupper.Subscribe("topic1", latch1.set)
+    pupper.Subscribe("topic2", latch2.set)
+    pupper.Subscribe("", latchP.set)
+
+    pub1.send("hello-1")
+    pub1.send("world-1")
+    pub2.send("hello-2")
+    pub2.send("world-2")
+    time.sleep(0.1)
+    assert latch1.all_values == ["hello-1", "world-1"]
+    assert latch2.all_values == ["hello-2", "world-2"]
+    assert latchP.all_values == ["hello-1", "world-1", "hello-2", "world-2"]
+
+
+def test__multiple_publishers():
+    pupper = Puppy()
+
+    pub1 = pupper.Publisher("topic1")
+    pub2 = pupper.Publisher("topic1")
+    latch = Latch()
+    pupper.Subscribe("topic1", latch.set)
+
+    pub1.send("hello")
+    pub2.send("world")
+    time.sleep(0.1)
+    latch.all_values == ["hello", "world"]
+
+
+def test__multiple_subscribers():
+    pupper = Puppy()
+    pub = pupper.Publisher("topic1")
+
+    latch1 = Latch()
+    latch2 = Latch()
+    pupper.Subscribe("topic1", latch1.set)
+    pupper.Subscribe("topic1", latch2.set)
+
+    pub.send("hello")
+    time.sleep(0.1)
+
+    assert latch1.all_values == ["hello"]
+    assert latch2.all_values == ["hello"]
 
 
 def test__filter():
     pupper = Puppy()
 
-    pub = pupper.Pub("topic1")
+    pub = pupper.Publisher("topic1")
 
-    sub = pupper.SubPull("topic1", filter=lambda i: i[2] == "c")
+    latch = Latch()
+    pupper.Subscribe("topic1", latch.set, filter=lambda i: i[2] == "c")
 
     pub.send("ab")
     pub.send("abc")
     pub.send("abd")
     pub.send("abcd")
     time.sleep(0.1)
-    assert sub.recv_all() == ["abc", "abcd"]
+    assert latch.all_values == ["abc", "abcd"]
 
 
 def test__verify():

@@ -14,36 +14,12 @@ class Publisher(Generic[T]):
         self.puppy.inject(self.topic, data)
 
 
-class SubscriberPush(Generic[T]):
+class Subscriber(Generic[T]):
     def __init__(self, callback: Callable):
         self.callback = callback
 
     def send(self, data: T):
         self.callback(data)
-
-
-class SubscriberPull(Generic[T]):
-    def __init__(self):
-        self.q = queue.Queue()
-
-    def send(self, data: T):
-        self.q.put(data)
-
-    def recv(self) -> Optional[T]:
-        try:
-            return self.q.get(block=False)
-        except:
-            return None
-
-    def recv_all(self) -> list[T]:
-        resp = []
-        while True:
-            e = self.recv()
-            if e == None:
-                break
-            else:
-                resp.append(e)
-        return resp
 
 
 class Topic(Generic[T]):
@@ -60,20 +36,17 @@ class Topic(Generic[T]):
                         continue
                 except:
                     continue
-
-            t = threading.Thread(target=s.send, args=(data,))
-            t.daemon = False
-            t.start()
-            t = None
+            s.send(data)
+            # t = threading.Thread(target=s.send, args=(data,))
+            # t.daemon = False
+            # t.start()
+            # t = None
 
         if self.parent:
             self.parent.send(data)
 
-    def add_sub_push(self, f: Callable[[Any], Any], filter=None):
-        self.sub.append((SubscriberPush(f), filter))
-
-    def add_sub_pull(self, s: SubscriberPull, filter=None):
-        self.sub.append((s, filter))
+    def add_subscriber(self, f: Callable[[Any], Any], filter=None):
+        self.sub.append((Subscriber(f), filter))
 
 
 def sanitize_topics(topic: Union[str, list[str]], delim: str):
@@ -123,7 +96,7 @@ class Puppy(Generic[T]):
 
         self.topic: dict[str, Topic] = {"": Topic("")}
 
-    def Pub(self, topics1: str) -> Publisher:
+    def Publisher(self, topics1: str) -> Publisher:
         topics = sanitize_topics(topics1, self.delim)
 
         for t in topics:
@@ -133,26 +106,21 @@ class Puppy(Generic[T]):
 
         return Publisher(self, topics)
 
-    def SubPush(self, topics: list[str], f: Callable[[Any], Any], filter=None):
+    def Subscribe(
+        self,
+        topics: list[str],
+        f: Callable[[T], Any],
+        filter: Callable[[T], bool] = None,
+    ):
         topics = sanitize_topics(topics, self.delim)
 
         for t in topics:
-            self.topic[t].add_sub_push(f, filter)
-
-    def SubPull(self, topics: list[str], filter=None):
-        topics = sanitize_topics(topics, self.delim)
-
-        s = SubscriberPull()
-        for t in topics:
-            self.topic[t].add_sub_pull(s, filter)
-
-        return s
+            self.topic[t].add_subscriber(f, filter)
 
     def inject(self, topics: list[str], data: T):
         topics = sanitize_topics(topics, self.delim)
 
         for t in topics:
-            assert isinstance(t, str)
             self.topic[t].send(data)
 
     def verify(self):
