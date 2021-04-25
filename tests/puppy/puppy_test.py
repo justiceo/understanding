@@ -1,6 +1,5 @@
 import time
-
-from src.puppy.puppy import Puppy
+from src.puppy.puppy import *
 
 
 class Latch(object):
@@ -52,17 +51,17 @@ def test__multiple_children():
     assert latch1.all_values == ["hello-1", "world-1"]
     assert latch2.all_values == ["hello-2", "world-2"]
     assert latchP.all_values == ["hello-1", "world-1", "hello-2", "world-2"]
-    assert pupper.verify()
+    assert  pupper.published_topics == set([*pupper.topic])
 
 
 def test__multiple_publishers():
     pupper = Puppy()
 
-    pub1 = pupper.Publisher("topic1")
-    pub2 = pupper.Publisher("topic1")
     latch = Latch()
     pupper.Subscribe("topic1", latch.set)
 
+    pub1 = pupper.Publisher("topic1")
+    pub2 = pupper.Publisher("topic1")
     pub1.send("hello")
     pub2.send("world")
     time.sleep(0.1)
@@ -107,3 +106,9 @@ def test__filter():
 def test__verify():
     pupper = Puppy()
     pupper.verify()
+
+
+def test__topicsInChain():
+    pupper = Puppy()
+    topics = pupper.getTopicsInChain("aaa/bbb", "/")
+    assert [*topics] == ["", "aaa", "aaa/bbb"]

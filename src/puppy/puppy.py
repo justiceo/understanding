@@ -6,9 +6,9 @@ T = TypeVar("T")
 
 
 class Publisher(Generic[T]):
-    def __init__(self, puppy, topics: list[str]):
+    def __init__(self, puppy, topic: str):
         self.puppy = puppy
-        self.topic = topics
+        self.topic = topic
 
     def send(self, data: T):
         self.puppy.inject(self.topic, data)
@@ -49,22 +49,21 @@ class Topic(Generic[T]):
         self.sub.append((Subscriber(f), filter))
 
 
-def sanitize_topics(topic: Union[str, list[str]], delim: str):
+def sanitize_topic(topic: str, delim: str) -> str:
     """
-    >>> sanitize_topics(['aaa','aaa/bbb','aaa/bbb/ccc'],'/')
+    >>> sanitize_topic(['aaa','aaa/bbb','aaa/bbb/ccc'],'/')
     ['aaa', 'aaa/bbb', 'aaa/bbb/ccc']
 
-    >>> sanitize_topics(['aaa','aaa/','/aaa/','/aaa/bbb/'],'/')
+    >>> sanitize_topic(['aaa','aaa/','/aaa/','/aaa/bbb/'],'/')
     ['aaa', 'aaa', 'aaa', 'aaa/bbb']
 
-    >>> sanitize_topics(['aaa','aaa/bbb','aaa/bbb/ccc'],'/')
+    >>> sanitize_topic(['aaa','aaa/bbb','aaa/bbb/ccc'],'/')
     ['aaa', 'aaa/bbb', 'aaa/bbb/ccc']
+
+    #TODO: update above.
     """
 
-    if not isinstance(topic, list):
-        topic = [topic]
-
-    return [e.strip(delim) for e in topic]
+    return topic.strip(delim)
 
 
 def get_parent_child(topic, delim):
@@ -94,36 +93,49 @@ class Puppy(Generic[T]):
         assert len(delim) == 1
         self.delim = delim
 
-        self.topic: dict[str, Topic] = {"": Topic("")}
-        self.published_topics = [""]
+        self.topic: dict[str, Topic[T]] = {"": Topic("")}
+        self.published_topics = {""}
 
-    def Publisher(self, topics1: str) -> Publisher:
-        topics = sanitize_topics(topics1, self.delim)
+    def Publisher(self, topic: str) -> Publisher:
+        topic = sanitize_topic(topic, self.delim)
 
-        for t in topics:
-            for a, b in get_parent_child(t, self.delim):
-                if b not in self.topic.keys():
-                    self.topic[b] = Topic(name=b, parent=self.topic[a])
-                    self.published_topics.append(b)
+        for topic_key, topic_obj in self.getTopicsInChain(topic, self.delim).items():
+            self.topic[topic_key] = topic_obj
+            self.published_topics.add(topic_key)
 
-        return Publisher(self, topics)
+        return Publisher(self, topic)
 
     def Subscribe(
         self,
-        topics: list[str],
+        topic: str,
         f: Callable[[T], Any],
         filter: Callable[[T], bool] = None,
     ):
-        topics = sanitize_topics(topics, self.delim)
+        topic = sanitize_topic(topic, self.delim)
 
-        for t in topics:
-            self.topic[t].add_subscriber(f, filter)
+        for topic_key, topic_obj in self.getTopicsInChain(topic, self.delim).items():
+            self.topic[topic_key] = topic_obj
 
-    def inject(self, topics: list[str], data: T):
-        topics = sanitize_topics(topics, self.delim)
+        self.topic[topic].add_subscriber(f, filter)
 
-        for t in topics:
-            self.topic[t].send(data)
+    def inject(self, topic: str, data: T):
+        topic = sanitize_topic(topic, self.delim)
+
+        self.topic[topic].send(data)
+
+    def getTopicsInChain(self, topic: str, delim: str = "/"):
+        res: dict[str, Topic] = {"": self.topic[""]}
+        topics = topic.split(delim)
+        for i in range(len(topics)):
+            t = delim.join(topics[: i + 1])
+            if t in self.topic:
+                res[t] = self.topic[t]
+                continue
+            if i == 0:
+                res[t] = Topic(name=t, parent=res[""])
+            else:
+                res[t] = Topic(name=t, parent=res[delim.join(topics[:i])])
+        return res
 
     def verify(self) -> bool:
-        return self.published_topics == [*self.topic]
+        return list(self.published_topics) == [*self.topic]
