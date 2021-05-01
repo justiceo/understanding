@@ -1,5 +1,5 @@
 import time
-from src.puppy.puppy import *
+from understanding.src.puppy.puppy import *
 
 
 class Latch(object):
