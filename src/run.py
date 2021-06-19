@@ -1,15 +1,11 @@
 import argparse
-import os
-import time
-from nltk.tree import Tree
 from models.corenlp import CoreNLP
 from models.gensim import Gensim
-import re
-from difflib import SequenceMatcher
-from fuzzywuzzy import fuzz
-from wiki_paragraphs import paragraphs_local
+from wiki_paragraphs import paragraphs_remote
 from utils import *
 from utils import fix_punctuation
+from bottle import route, run, template, request, response
+from json import dumps
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -51,11 +47,11 @@ def trim_text(text):
     return text  # summarize(text, ratio=0.9)
 
 
-def run():
+def run_models(input=args.input):
     logger.info("starting the whole shebang.")
 
     # get input text.
-    paragraphs = paragraphs_local(args.input)
+    paragraphs = paragraphs_remote(input)
     text = "\n".join(paragraphs[0:2])
     logger.info("acquired input")
 
@@ -90,8 +86,18 @@ def run():
     # TODO: score the prompt, answer and options.
 
     logger.info("done")
+    return questions
+
+@route('/')
+def index():
+    url = request.query.url
+    questions = run_models(url)
+    response.content_type = 'application/json'
+    return dumps(questions)
+
+
 
 
 if __name__ == "__main__":
     logger.info("$ run()")
-    run()
+    run(host='localhost', port=9200)
