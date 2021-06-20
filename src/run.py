@@ -2,6 +2,7 @@ import argparse
 from models.corenlp import CoreNLP
 from models.gensim import Gensim
 from text_extractor import extract_paragraphs
+from wiki_paragraphs import paragraphs_remote
 from utils import get_logger
 from utils import fix_punctuation
 from bottle import route, run, template, request, response
@@ -51,8 +52,8 @@ def run_models(input=args.input):
     logger.info("starting the whole shebang.")
 
     # get input text.
-    paragraphs = extract_paragraphs(input)
-    text = "\n".join(paragraphs[0:20])
+    paragraphs = paragraphs_remote(input)
+    text = "\n".join(paragraphs[0:2])
     logger.info("acquired input: ")
     print("input: ", text)
 

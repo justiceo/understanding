@@ -23,6 +23,7 @@ def download_file(url):
 
 def extract_text(filename):
     print("Extracting text from ", filename)
+    # TODO: if filename ends in .html, use unfluff.
     return textract.process(filename)
 
 def maybe_download_and_extract_text(uri):
