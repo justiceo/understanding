@@ -14,17 +14,18 @@ class Gensim:
         Returns true if server returned OK.
         """
         self.manager = BaseManager(address=('localhost', GENSIM_PORT), authkey=b'random auth')
-        self.manager.connect()
         return False
 
     
     def most_similar(self, terms):
+        self.manager.connect()
         (requests_queue, response_queue) = self.get_queues()
         requests_queue.put(terms)
         return response_queue.get()
 
     
     def get_queues(self):
+        self.manager.connect()
         BaseManager.register('terms_queue')
         BaseManager.register('similarities_queue')
         

@@ -102,4 +102,4 @@ def index():
 
 if __name__ == "__main__":
     logger.info("$ run()")
-    run(host='localhost', port=9200)
+    run(host='localhost', port=9200, debug=True, reloader=True)
