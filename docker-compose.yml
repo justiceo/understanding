@@ -1,9 +1,12 @@
 version: "3.3"
 services:
-    # web:
-    #     build: .
-    #     ports:
-    #         - "5000:5000"
+    web:
+        build: .
+        ports:
+            - "9200:9200"
+        depends_on: 
+            - "gensim"
+        command: ["./wait-for-it.sh", "gensim:9100", "--", "python3", "src/run.py"]
     corenlp:
         image: "nlpbox/corenlp"
         ports:
