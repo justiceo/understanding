@@ -32,7 +32,7 @@ def paragraphs_local(file_name):
 
     return data.split("\n\n")
 
-def paragraphs(url):
+def paragraphs_remote(url):
     # If error, return empty list.
     text = raw_text(url)
     if text is None:
@@ -55,7 +55,7 @@ if __name__ == "__main__":
                         help="File to write text output")
 
     args = parser.parse_args()
-    ps = paragraphs(args.url)
+    ps = paragraphs_remote(args.url)
     out = "\n\n".join(ps)
     if args.output is not None:
         with open(args.output, "w") as outfile:
