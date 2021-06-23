@@ -1,3 +1,5 @@
+
+from typing import TypeVar, Generic
 import argparse
 import os
 import time
@@ -24,7 +26,61 @@ ORCHESTRATOR_PORT = 9900
 INPUT_QUEUE_NAME = "request"
 OUTPUT_QUEUE_NAME = "response"
 
-class QueueManager(BaseManager): pass
+
+# The type of input
+I = TypeVar("I")
+O = TypeVar("O")
+
+
+class QueueManager(BaseManager, Generic[I, O]):
+    def __init__(self, is_server: bool = False):
+        """
+        Sets up a queue-based multi-process comms.
+
+        @param is_server    determines how the connection is setup for caller.
+                            and actions they can take on the exposed APIs.
+        """
+        self.is_server = is_server
+        self.logger = get_logger()
+
+        in_callable: "Queue[I]" = queue.Queue() if is_server else None
+        out_callable: "Queue[O]" = queue.Queue() if is_server else None
+        QueueManager.register(INPUT_QUEUE_NAME, callable=in_callable)
+        QueueManager.register(OUTPUT_QUEUE_NAME, callable=out_callable)
+        
+        self.manager = QueueManager(
+            address=(ORCHESTRATOR_HOST, ORCHESTRATOR_PORT), authkey=b"random auth"
+        )
+
+        if is_server:
+            self.manager.start()
+        else:
+            self.manager.connect()
+        
+
+        self.request_queue = self.manager.request()
+        self.response_queue = self.manager.response()
+
+        self.logger.info(
+             "\n\t\tQueues are ready on port %d\n"
+            + "\t\tAccepting requests on the queue '%s'\n"
+            + "\t\tPublishing responses on the queue '%s'\n",
+            ORCHESTRATOR_PORT,
+            INPUT_QUEUE_NAME,
+            OUTPUT_QUEUE_NAME,
+        )
+
+    def send_request(self, req: I):
+        if self.is_server:
+            raise NotImplementedError("Only clients can send requests.")
+
+        self.request_queue.put(req)
+
+    def get_request_queue(self) -> "Queue[I]":
+        if not self.is_server:
+            raise NotImplementedError("Only the server can access the request queue.")
+
+        return self.request_queue
 
 class Orchestrator:
     """
@@ -100,11 +156,11 @@ class Orchestrator:
                     entity["text"], "_____"
                 )
                 question["answer"] = entity["text"]
-                question["options"] = self.gensim.most_similar(entity["text"].split())                
+                question["options"] = self.gensim.most_similar(entity["text"].split())
                 if len(question["options"]) >= 4:
                     questions.append(question)
 
-        self.logger.info("done")      
+        self.logger.info("done")
         return questions
 
     def sentence_str(self, sentence):
