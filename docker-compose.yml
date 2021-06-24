@@ -1,5 +1,8 @@
 version: "3.3"
 services:
+    # docker-compose up --build --force-recreate web
+    #   --force-recreate    Recreate containers even if their configuration and image haven't changed.
+    #   --build             Build images before starting containers.
     web:
         build: .
         ports:

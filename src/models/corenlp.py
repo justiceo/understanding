@@ -16,7 +16,7 @@ class CoreNLP:
         Issues a call to the server with a hardcoded text, prints the return status.
         Returns true if server returned OK.
         """
-        self.url = "http://localhost:" + str(port)
+        self.url = "http://corenlp:" + str(port)
         self.session = requests.Session()
         return False
 
