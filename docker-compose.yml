@@ -10,6 +10,12 @@ services:
         depends_on: 
             - "gensim"
         command: ["./wait-for-it.sh", "gensim:9100", "--", "python3", "src/run.py"]
+        restart: "on-failure"
+    text:
+        # test:  curl -X GET -k http://127.0.0.1:9300 -H "Content-Type: application/json" -d '{"url": "https://en.wikipedia.org/wiki/Oxygen"}' 
+        image: "justiceo/text-extraction"
+        ports:
+            - "9300:9300"
     corenlp:
         image: "nlpbox/corenlp"
         ports:

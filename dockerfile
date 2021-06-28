@@ -12,5 +12,6 @@ RUN python3 -m pip install -r requirements.txt
 # Copy everything else to docker directory.
 COPY . .
 
+EXPOSE 9200
 # Start application.
 CMD ["python3", "src/run.py"]

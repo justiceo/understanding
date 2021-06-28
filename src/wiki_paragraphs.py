@@ -3,34 +3,16 @@
 import os
 import json
 import re
-import shutil
-from shutil import which
+from utils import get_logger
 
 
-def is_requirements_ok():
-    """Check whether curl and unfluffly is on PATH and marked as executable."""
-    if which("curl") is None:
-        print("Install curl")
-        return False
-
-    if which("unfluff") is None:
-        print("Install the node package unfluff")
-        return False
-
-    return True
+logger = get_logger(__name__)
 
 
 def raw_text(url):
-    if not is_requirements_ok():
-        return None
-    data = os.popen('curl -s "{url}" | unfluff'.format(url=url))
-    return json.load(data)["text"]
+    data = os.popen("""curl -X GET http://localhost:9300  -d '{"url": "$URL"}'""".replace("$URL", url))
+    return json.load(data)
 
-def paragraphs_local(file_name):
-    with open(file_name, 'r') as file:
-        data = file.read()
-
-    return data.split("\n\n")
 
 def paragraphs_remote(url):
     # If error, return empty list.
@@ -45,20 +27,3 @@ def paragraphs_remote(url):
     # Split into paragraphs.
     return text.split("\n\n")
 
-
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--url", required=True,
-                        help="The URL to wiki page.")
-    parser.add_argument("--output", required=False,
-                        help="File to write text output")
-
-    args = parser.parse_args()
-    ps = paragraphs_remote(args.url)
-    out = "\n\n".join(ps)
-    if args.output is not None:
-        with open(args.output, "w") as outfile:
-            outfile.write(out)
-    else:
-        print(out)

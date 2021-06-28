@@ -92,6 +92,7 @@ def run_models(input=args.input):
 
 @route('/')
 def index():
+    logger.info("Received new request", request)
     url = request.query.url
     questions = run_models(url)
     response.content_type = 'application/json'
@@ -101,5 +102,5 @@ def index():
 
 
 if __name__ == "__main__":
-    logger.info("$ run()")
-    run(host='localhost', port=9200, debug=True, reloader=True)
+    logger.info("initializing web")
+    run(host='0.0.0.0', port=9200, debug=True, reloader=True)
