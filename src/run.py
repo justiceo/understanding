@@ -1,8 +1,8 @@
+import subprocess
+import json
 import argparse
 from models.corenlp import CoreNLP
 from models.gensim import Gensim
-from text_extractor import extract_paragraphs
-from wiki_paragraphs import paragraphs_remote
 from utils import get_logger
 from utils import fix_punctuation
 from bottle import route, run, template, request, response
@@ -28,6 +28,16 @@ coreNLP.init()
 gensim = Gensim()
 gensim.init()
 
+def paragraphs_remote(url):
+    p = subprocess.Popen("""curl -X GET http://text:9300 -H "Content-Type: application/json"  -d '{"url": "$URL"}'""".replace("$URL", url), shell=True, stdout=subprocess.PIPE)
+    data, _ = p.communicate()
+    logger.info("\n\n" + str(data) + "\n\n")
+    paragraphs = json.loads(data)
+    
+    if paragraphs is None:
+        return []
+
+    return paragraphs
 
 def sentence_str(sentence):
     return fix_punctuation(" ".join([t["word"] for t in sentence["tokens"]]))
@@ -92,7 +102,7 @@ def run_models(input=args.input):
 
 @route('/')
 def index():
-    logger.info("Received new request", request)
+    logger.info("Received new request" + str(request))
     url = request.query.url
     questions = run_models(url)
     response.content_type = 'application/json'

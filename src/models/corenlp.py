@@ -75,7 +75,7 @@ class CoreNLP:
 
         return self.__for_annotators(sentences, "ner", encoding)
 
-    def __for_annotators(self, sentences, annotators, encoding, timeout=60):
+    def __for_annotators(self, sentences, annotators, encoding, timeout=180):
         """
         Returns senteces tagged by the given annotators.
 

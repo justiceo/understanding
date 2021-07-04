@@ -13,7 +13,7 @@ class Gensim:
         Issues a call to the server with a hardcoded text, prints the return status.
         Returns true if server returned OK.
         """
-        self.manager = BaseManager(address=('localhost', GENSIM_PORT), authkey=b'random auth')
+        self.manager = BaseManager(address=('gensim', GENSIM_PORT), authkey=b'random auth')
         return False
 
     
