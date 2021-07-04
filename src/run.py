@@ -5,7 +5,7 @@ from models.corenlp import CoreNLP
 from models.gensim import Gensim
 from utils import get_logger
 from utils import fix_punctuation
-from bottle import route, run, template, request, response
+from bottle import route, run, request, response
 from json import dumps
 
 parser = argparse.ArgumentParser()
