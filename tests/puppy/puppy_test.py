@@ -110,5 +110,15 @@ def test__verify():
 
 def test__topicsInChain():
     pupper = Puppy()
+
+    topics = pupper.getTopicsInChain("", "/")
+    assert [*topics] == [""]
+
+    topics = pupper.getTopicsInChain("aaa", "/")
+    assert [*topics] == ["", "aaa"]
+
     topics = pupper.getTopicsInChain("aaa/bbb", "/")
     assert [*topics] == ["", "aaa", "aaa/bbb"]
+
+    topics = pupper.getTopicsInChain("111/@#B='", "/")
+    assert [*topics] == ["", "111", "111/@#B='"]

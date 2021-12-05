@@ -2,7 +2,9 @@ from typing import Callable, Any, TypeVar, Generic
 
 T = TypeVar("T")
 
+# TODO: Add reasonable logging to this.
 
+# TODO: Each publisher should have a name.
 class Publisher(Generic[T]):
     def __init__(self, puppy, topic: str):
         self.puppy = puppy
@@ -11,7 +13,7 @@ class Publisher(Generic[T]):
     def send(self, data: T):
         self.puppy.inject(self.topic, data)
 
-
+# TODO: Each subscriber should have a name.
 class Subscriber(Generic[T]):
     def __init__(self, callback: Callable):
         self.callback = callback
@@ -41,7 +43,6 @@ class Topic(Generic[T]):
 
     def add_subscriber(self, f: Callable[[Any], Any], filter=None):
         self.sub.append((Subscriber(f), filter))
-
 
 class Puppy(Generic[T]):
     def __init__(self, delim: str = "/"):
@@ -86,5 +87,21 @@ class Puppy(Generic[T]):
                 res[t] = Topic(name=t, parent=res[delim.join(topics[:i])])
         return res
 
+    # TODO: If a topic does not have both pub and sub, remove it.
+    # If a pub isn't associated with a topic, remove it.
+    # If a sub isn't associated with a topic, remove it.
+    # How about the root publisher that isn't subscribed to anything? There isn't.
+    # Convert into a tree, allowing pubs to call subs directly.
+    def optimize(self):
+        return False
+
+    # Print the graph of the execution.
+    def plan(self):
+        return False
+
+
+    # TODO: This should verify that every topic has both a publisher and a subscriber.
+    # How about parent topics?
     def verify(self) -> bool:
         return list(self.published_topics) == [*self.topic]
+
