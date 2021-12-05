@@ -13,10 +13,11 @@ services:
         restart: "on-failure"
     text:
         # test:  curl -X GET -k http://127.0.0.1:9300 -H "Content-Type: application/json" -d '{"url": "https://en.wikipedia.org/wiki/Oxygen"}' 
-        image: "justiceo/text-extraction:v0.1.0"
+        image: "justiceo/text-extraction:latest"
         ports:
             - "9300:9300"
     corenlp:
+        # test: curl --data 'The quick brown fox jumped over the lazy dog.' 'http://localhost:9000/?properties={%22annotators%22%3A%22tokenize%2Cssplit%2Cpos%22%2C%22outputFormat%22%3A%22json%22}' -o -
         image: "nlpbox/corenlp"
         ports:
             - "9000:9000"
