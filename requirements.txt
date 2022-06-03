@@ -1,4 +1,4 @@
 argparse==1.4.0
 requests==2.25.1
 pytest==6.2.3
-bottle==0.12.19
+bottle==0.12.20
